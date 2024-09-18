@@ -3,16 +3,21 @@ import { Product } from 'src/products/product.entity';
 import { User } from 'src/users/user.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  Generated,
   JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Order {
+  // * UUID
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     type: String,
@@ -21,22 +26,44 @@ export class Order {
   })
   id: string;
 
+  // * ORDER NUMBER
+  @Column()
+  @Generated('increment')
+  @ApiProperty({
+    type: Number,
+    description: 'Order Number',
+    example: 202,
+  })
+  orderNumber: number;
+
+  // * ORDER PROCESSING STATUS
   @Column()
   @ApiProperty({
     type: Boolean,
-    description: 'Order Taken Status',
+    description: 'Order Processing Status',
     example: true,
   })
   isTaken: boolean;
 
+  // * ORDER DELIVERY STATUS
   @Column()
   @ApiProperty({
     type: Boolean,
-    description: 'Order Delivered Status',
+    description: 'Order Delivery Status',
     example: true,
   })
   isDelivered: boolean;
 
+  // * ORDER PAYMENT STATUS
+  @Column()
+  @ApiProperty({
+    type: Boolean,
+    description: 'Order Payment Status',
+    example: true,
+  })
+  isPaid: boolean;
+
+  // * ORDER ADDRESS
   @Column()
   @ApiProperty({
     type: String,
@@ -45,6 +72,36 @@ export class Order {
   })
   address: string;
 
+  // * ORDER ZIP CODE
+  @Column()
+  @ApiProperty({
+    type: Number,
+    description: 'Order address zip code',
+    example: 1000,
+  })
+  zip: number;
+
+  // * PREFERRED DELIVERY DATE
+  @Column('date')
+  @ApiProperty({
+    type: Date,
+    description: 'Preferred date of delivery',
+    example: '2024-11-21',
+  })
+  deliveryDate: Date;
+
+  // * TOTAL PRICE
+  @Column({
+    type: 'double precision',
+  })
+  @ApiProperty({
+    type: Number,
+    description: 'Total price of the order',
+    example: 2000,
+  })
+  total: number;
+
+  // * USER RELATION
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({
     name: 'user_id',
@@ -54,6 +111,7 @@ export class Order {
   })
   user: User;
 
+  // * USER ID
   @Column({
     name: 'user_id',
   })
@@ -64,6 +122,7 @@ export class Order {
   })
   userId: string;
 
+  // * PRODUCT RELATION
   @ManyToMany(() => Product, (product) => product.orders)
   @JoinTable({
     name: 'orders_products',
@@ -72,4 +131,47 @@ export class Order {
   })
   @ApiProperty({ type: () => Product, isArray: true })
   products: Product[];
+
+  // * Created At
+  @CreateDateColumn({
+    name: 'created_at',
+  })
+  @ApiProperty({
+    type: Date,
+    example: '2024-04-21 11:13:15.61689',
+  })
+  createdAt: Date;
+
+  // * Updated At
+  @UpdateDateColumn({
+    name: 'updated_at',
+  })
+  @ApiProperty({
+    type: Date,
+    example: '2024-04-21 11:13:15.61689',
+  })
+  updatedAt: Date;
+
+  // * Updated By
+  @Column({
+    name: 'last_updated_by',
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: 'user@mail.com',
+  })
+  lastUpdatedBy: string;
+
+  // * Deleted At
+  @DeleteDateColumn({
+    name: 'deleted_at',
+  })
+  @ApiProperty({
+    type: Date,
+    example: '2024-04-21 11:13:15.61689',
+    nullable: true,
+  })
+  deletedAt: Date;
 }
