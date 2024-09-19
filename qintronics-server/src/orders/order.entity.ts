@@ -27,7 +27,9 @@ export class Order {
   id: string;
 
   // * ORDER NUMBER
-  @Column()
+  @Column({
+    name: 'order_number',
+  })
   @Generated('increment')
   @ApiProperty({
     type: Number,
@@ -37,7 +39,10 @@ export class Order {
   orderNumber: number;
 
   // * ORDER PROCESSING STATUS
-  @Column()
+  @Column({
+    name: 'is_taken',
+    default: false,
+  })
   @ApiProperty({
     type: Boolean,
     description: 'Order Processing Status',
@@ -46,7 +51,10 @@ export class Order {
   isTaken: boolean;
 
   // * ORDER DELIVERY STATUS
-  @Column()
+  @Column({
+    name: 'is_delivered',
+    default: false,
+  })
   @ApiProperty({
     type: Boolean,
     description: 'Order Delivery Status',
@@ -55,7 +63,9 @@ export class Order {
   isDelivered: boolean;
 
   // * ORDER PAYMENT STATUS
-  @Column()
+  @Column({
+    name: 'is_paid',
+  })
   @ApiProperty({
     type: Boolean,
     description: 'Order Payment Status',
@@ -82,7 +92,10 @@ export class Order {
   zip: number;
 
   // * PREFERRED DELIVERY DATE
-  @Column('date')
+  @Column({
+    type: Date,
+    name: 'delivery_date',
+  })
   @ApiProperty({
     type: Date,
     description: 'Preferred date of delivery',
