@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Product } from 'src/products/product.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Category {
@@ -20,9 +27,25 @@ export class Category {
   })
   name: string;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category, { cascade: true })
   @ApiPropertyOptional({
     type: Product,
   })
   products: Product[];
+
+  @CreateDateColumn()
+  @ApiProperty({
+    type: String,
+    description: 'Category created date',
+    example: '2023-01-01T00:00:00.000Z',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @ApiProperty({
+    type: String,
+    description: 'Category updated date',
+    example: '2023-01-01T00:00:00.000Z',
+  })
+  updatedAt: Date;
 }
