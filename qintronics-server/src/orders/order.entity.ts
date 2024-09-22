@@ -50,6 +50,18 @@ export class Order {
   })
   isTaken: boolean;
 
+  // * ORDER CANCELING STATUS
+  @Column({
+    name: 'is_cancelled',
+    default: false,
+  })
+  @ApiProperty({
+    type: Boolean,
+    description: 'Order Canceling Status',
+    example: true,
+  })
+  isCancelled: boolean;
+
   // * ORDER DELIVERY STATUS
   @Column({
     name: 'is_delivered',

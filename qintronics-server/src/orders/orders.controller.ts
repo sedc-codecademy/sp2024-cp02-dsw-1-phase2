@@ -10,6 +10,7 @@ import { OrdersService } from './orders.service';
 import { Order } from './order.entity';
 import { OrderCreateDto } from './dtos/order-create.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
+import { OrderUpdateDto } from './dtos/order-update.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -81,5 +82,27 @@ export class OrdersController {
     @Param('orderId') orderId: string,
   ): Promise<Order> {
     return this.ordersService.updateOrderStatus(status, orderId);
+  }
+  //* UPDATE ORDER (ADMIN)
+  @Put('/update/:orderId')
+  @ApiOperation({ summary: 'Make changes to the order' })
+  @ApiBody({
+    type: OrderUpdateDto,
+  })
+  @ApiParam({
+    type: String,
+    name: 'orderId',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+    description: 'Id of the order',
+  })
+  @ApiOkResponse({
+    type: Order,
+    description: 'Order successfully updated',
+  })
+  updateOrder(
+    @Body() order: OrderUpdateDto,
+    @Param('orderId') orderId: string,
+  ): Promise<Order> {
+    return this.ordersService.updateOrder(order, orderId);
   }
 }
