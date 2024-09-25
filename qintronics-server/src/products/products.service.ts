@@ -23,6 +23,8 @@ export class ProductsService {
     categoryName,
     page = 1,
     pageSize = 10,
+    sortBy = 'name',
+    sort = 'ASC',
   }: ProductQueryDto): Promise<any> {
     let whereQuery: FindOptionsWhere<Product> = {};
 
@@ -57,6 +59,9 @@ export class ProductsService {
       where: whereQuery,
       skip: (page - 1) * pageSize,
       take: pageSize,
+      order: {
+        [sortBy]: sort,
+      },
     });
 
     const totalPages = Math.ceil(total / pageSize);

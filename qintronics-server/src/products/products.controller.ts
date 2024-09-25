@@ -65,6 +65,18 @@ export class ProductsController {
     description: 'Page Size',
     required: false,
   })
+  @ApiQuery({
+    type: String,
+    name: 'sortBy',
+    description: 'Sort By',
+    required: false,
+  })
+  @ApiQuery({
+    type: String,
+    name: 'sort',
+    description: 'Sort order (ASC or DESC)',
+    required: false,
+  })
   getProducts(@Query() query: ProductQueryDto): Promise<ProductResponseDto[]> {
     return this.productsService.getProducts(query);
   }

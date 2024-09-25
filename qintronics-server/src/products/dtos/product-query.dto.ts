@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
   @IsString()
@@ -21,4 +21,14 @@ export class ProductQueryDto {
   @IsInt()
   @IsOptional()
   pageSize?: number = 10;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['name', 'price'])
+  sortBy?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['ASC', 'DESC'])
+  sort?: 'ASC' | 'DESC';
 }
