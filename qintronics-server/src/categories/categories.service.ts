@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  MethodNotAllowedException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './category.entity';
 import { DeepPartial, FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -33,12 +37,13 @@ export class CategoriesService {
 
     return this.categoryRepository.find({
       where: whereQuery,
-      relations: ['products'],
     });
   }
 
   async getCategoryById(id: string): Promise<CategoryResponseDto> {
-    return this.categoryRepository.findOneByOrFail({ id });
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) throw new NotFoundException('Category not found!');
+    return category;
   }
 
   async createCategory(body: CategoryCreateDto): Promise<CategoryResponseDto> {
@@ -65,25 +70,16 @@ export class CategoriesService {
     id: string,
     body: CategoryUpdateDto,
   ): Promise<CategoryResponseDto> {
-    const category = await this.categoryRepository.findOneByOrFail({ id });
+    const category = await this.categoryRepository.findOneBy({ id });
+
+    if (!category) throw new NotFoundException('Category not found!');
+
     const updatedCategory = this.categoryRepository.merge(category, body);
     return this.categoryRepository.save(updatedCategory);
   }
 
   async deleteCategory(id: string): Promise<void> {
-    const category = await this.categoryRepository.findOne({
-      where: { id },
-      relations: ['products'],
-    });
-
-    if (!category) {
-      throw new Error('Category not found!');
-    }
-
-    if (category.products.length > 0) {
-      throw new Error('Cannot delete category with associated products!');
-    }
-
-    await this.categoryRepository.remove(category);
+    await this.productRepository.delete({ categoryId: id });
+    await this.categoryRepository.delete({ id });
   }
 }

@@ -77,7 +77,7 @@ export class ProductsController {
     description: 'Sort order (ASC or DESC)',
     required: false,
   })
-  getProducts(@Query() query: ProductQueryDto): Promise<ProductResponseDto[]> {
+  getProducts(@Query() query: ProductQueryDto): Promise<ProductResponseDto> {
     return this.productsService.getProducts(query);
   }
 
@@ -93,7 +93,7 @@ export class ProductsController {
     type: String,
     description: 'Product ID',
   })
-  getProductById(@Param('id') id: string): Promise<ProductResponseDto> {
+  getProductById(@Param('id') id: string): Promise<Product> {
     return this.productsService.getProductById(id);
   }
 
@@ -107,7 +107,7 @@ export class ProductsController {
   @ApiBody({
     type: ProductCreateDto,
   })
-  createProduct(@Body() body: ProductCreateDto): Promise<ProductResponseDto> {
+  createProduct(@Body() body: ProductCreateDto): Promise<Product> {
     return this.productsService.createProduct(body);
   }
 
@@ -129,7 +129,7 @@ export class ProductsController {
   updateProduct(
     @Param('id') id: string,
     @Body() body: ProductUpdateDto,
-  ): Promise<ProductResponseDto> {
+  ): Promise<Product> {
     return this.productsService.updateProduct(id, body);
   }
 

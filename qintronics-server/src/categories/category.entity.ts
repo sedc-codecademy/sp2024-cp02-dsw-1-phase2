@@ -27,7 +27,7 @@ export class Category {
   })
   name: string;
 
-  @OneToMany(() => Product, (product) => product.category, { cascade: true })
+  @OneToMany(() => Product, (product) => product.category)
   @ApiPropertyOptional({
     type: Product,
   })

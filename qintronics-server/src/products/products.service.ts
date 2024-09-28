@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -25,7 +25,7 @@ export class ProductsService {
     pageSize = 10,
     sortBy = 'name',
     sort = 'ASC',
-  }: ProductQueryDto): Promise<any> {
+  }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
 
     if (name) {
@@ -47,7 +47,7 @@ export class ProductsService {
         where: { name: ILike(categoryName) },
       });
 
-      if (!category) throw new Error('Category not found!');
+      if (!category) throw new NotFoundException('Category not found!');
 
       whereQuery = {
         ...whereQuery,
@@ -76,17 +76,28 @@ export class ProductsService {
     return payload;
   }
 
-  async getProductById(id: string): Promise<any> {
-    return this.productRepository.findOneByOrFail({ id });
+  async getProductById(id: string): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) throw new NotFoundException('Product not found!');
+    return product;
   }
 
-  async createProduct(body: ProductCreateDto): Promise<any> {
+  async createProduct(body: ProductCreateDto): Promise<Product> {
+    const category = await this.categoryRepository.findOneBy({
+      id: body.categoryId,
+    });
+
+    if (!category) throw new NotFoundException('Category not found!');
+
     const newProduct = this.productRepository.create(body);
     return this.productRepository.save(newProduct);
   }
 
-  async updateProduct(id: string, body: ProductUpdateDto): Promise<any> {
-    const product = await this.productRepository.findOneByOrFail({ id });
+  async updateProduct(id: string, body: ProductUpdateDto): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id });
+
+    if (!product) throw new NotFoundException('Product not found!');
+
     const updatedProduct = this.productRepository.merge(product, body);
     return this.productRepository.save(updatedProduct);
   }
