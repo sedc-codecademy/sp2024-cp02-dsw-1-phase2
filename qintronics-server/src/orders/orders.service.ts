@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './order.entity';
 import { In, Repository } from 'typeorm';
@@ -36,18 +36,18 @@ export class OrdersService {
   }
 
   //* CREATE ORDER
-  async createOrder(orderEntity: OrderCreateDto): Promise<Order> {
+  async createOrder(body: OrderCreateDto): Promise<Order> {
     const products = await this.productsRepository.findBy({
-      id: In(orderEntity.products),
+      id: In(body.products),
     });
 
     const total = this.updateTotal(products);
     const order = {
-      ...orderEntity,
+      ...body,
       isTaken: false,
       isDelivered: false,
       isCanceled: false,
-      orderDate: new Date(orderEntity.deliveryDate),
+      orderDate: new Date(),
       products: products,
       total,
     };
@@ -66,7 +66,7 @@ export class OrdersService {
     });
 
     if (!orderToBeUpdated) {
-      throw new Error('Order not found');
+      throw new NotFoundException('Order not found');
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeUpdated, status);
@@ -74,11 +74,8 @@ export class OrdersService {
   }
 
   //* UPDATE ORDER (ADMIN)
-  async updateOrder(
-    orderUpdateDto: OrderUpdateDto,
-    orderId: string,
-  ): Promise<Order> {
-    const { products, ...orderData } = orderUpdateDto;
+  async updateOrder(body: OrderUpdateDto, orderId: string): Promise<Order> {
+    const { products: productIds, ...orderData } = body;
 
     let order = await this.ordersRepository.findOne({
       where: { id: orderId },
@@ -86,22 +83,20 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new Error(`Order with ID ${orderId} not found`);
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
-
-    const total = this.updateTotal(order.products);
 
     let updatedOrder = {
       ...order,
-      total,
       ...orderData,
     };
-    if (products && products.length > 0) {
+    if (productIds.length > 0) {
       const products = await this.productsRepository.findBy({
-        id: In(orderUpdateDto.products),
+        id: In(productIds),
       });
 
       updatedOrder.products = products;
+      updatedOrder.total = this.updateTotal(products);
     }
 
     return this.ordersRepository.save(updatedOrder);
