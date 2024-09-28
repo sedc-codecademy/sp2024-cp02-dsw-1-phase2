@@ -67,6 +67,7 @@ export class OrdersService {
 
     if (!orderToBeUpdated) {
       throw new NotFoundException('Order not found');
+      // comment
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeUpdated, status);
