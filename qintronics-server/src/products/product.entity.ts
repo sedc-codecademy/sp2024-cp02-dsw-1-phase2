@@ -3,11 +3,13 @@ import { Category } from 'src/categories/category.entity';
 import { Order } from 'src/orders/order.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -52,14 +54,22 @@ export class Product {
   })
   img: string;
 
-  @Column()
+  @Column('jsonb')
   @ApiProperty({
-    type: String,
+    type: Object,
     description: 'Product specifications',
-    example:
-      'CPU: Intel Core i7-1165G7, GPU: Intel Iris Xe, RAM: 16GB, Storage: 512GB SSD, Display: 14 FHD, Camera: 720p HD, Battery: Up to 15 hours, OS: Windows 10 Pro',
+    example: {
+      cpu: 'Intel Core i7-1165G7',
+      gpu: 'Intel Iris Xe',
+      ram: '16GB',
+      storage: '512GB SSD',
+      display: '14" FHD',
+      camera: '720p HD',
+      battery: 'Up to 15 hours',
+      os: 'Windows 10 Pro',
+    },
   })
-  specifications: string;
+  specifications: Record<string, any>;
 
   @Column()
   @ApiProperty({
@@ -115,4 +125,20 @@ export class Product {
   @ManyToMany(() => Order, (order) => order.products)
   @ApiProperty({ type: () => Order, isArray: true })
   orders: Order[];
+
+  @CreateDateColumn()
+  @ApiProperty({
+    type: String,
+    description: 'Product created date',
+    example: '2023-01-01T00:00:00.000Z',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @ApiProperty({
+    type: String,
+    description: 'Product updated date',
+    example: '2023-01-01T00:00:00.000Z',
+  })
+  updatedAt: Date;
 }
