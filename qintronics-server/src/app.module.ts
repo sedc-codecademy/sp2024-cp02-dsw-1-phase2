@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
-import { ProductsModule } from './products/products.module';
-import { UsersModule } from './users/users.module';
-import { OrdersModule } from './orders/orders.module';
 import { AuthModule } from './auth/auth.module';
-import { PaymentInfoModule } from './payment-info/payment-info.module';
 import { CategoriesModule } from './categories/categories.module';
+import { DatabaseModule } from './database/database.module';
+import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
+import { UserInfoModule } from './user-info/user-info.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,11 +15,11 @@ import { CategoriesModule } from './categories/categories.module';
     }),
     DatabaseModule,
     ProductsModule,
-    UsersModule,
     OrdersModule,
     AuthModule,
-    PaymentInfoModule,
     CategoriesModule,
+    UsersModule,
+    UserInfoModule,
   ],
   controllers: [],
   providers: [],
