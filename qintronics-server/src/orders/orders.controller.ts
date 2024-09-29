@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiOkResponse,
@@ -11,6 +20,9 @@ import { Order } from './order.entity';
 import { OrderCreateDto } from './dtos/order-create.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
+import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
+import { PageDto } from 'src/common/ordersPagination/page.dto';
+import { OrderQueryDto } from './dtos/order-query.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -18,14 +30,45 @@ export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   //* GET ALL ORDERS
+  // @Get('/')
+  // @ApiOperation({ summary: 'Retrieve all orders' })
+  // @ApiOkResponse({
+  //   type: [Order],
+  //   description: 'Orders successfully retrieved',
+  // })
+  // getAll(): Promise<Order[]> {
+  //   return this.ordersService.getAll();
+  // }
+
+  //* GET ALL ORDERS W/ QUERIES AND PAGINATION
   @Get('/')
   @ApiOperation({ summary: 'Retrieve all orders' })
   @ApiOkResponse({
     type: [Order],
     description: 'Orders successfully retrieved',
   })
-  getAll(): Promise<Order[]> {
-    return this.ordersService.getAll();
+  getAll(
+    @Query() paginationQueries: PageOptionsDto,
+    @Query() queryParams: OrderQueryDto,
+  ): Promise<PageDto<Order>> {
+    return this.ordersService.getAll(paginationQueries, queryParams);
+  }
+
+  //* GET ORDER BY ID
+  @Get('/single/:orderId')
+  @ApiOperation({ summary: 'Retrieve order by ID' })
+  @ApiParam({
+    type: String,
+    name: 'orderId',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+    description: 'Id of the order',
+  })
+  @ApiOkResponse({
+    type: Order,
+    description: 'Order successfully retrieved',
+  })
+  getOrderById(@Param('orderId') orderId: string): Promise<Order> {
+    return this.ordersService.getOrderById(orderId);
   }
 
   //* GET ORDER BY USER ID
@@ -59,6 +102,23 @@ export class OrdersController {
   })
   createOrder(@Body() order: OrderCreateDto): Promise<Order> {
     return this.ordersService.createOrder(order);
+  }
+
+  //* CANCEL ORDER (USER, ADMIN)
+  @Put('/cancel/:orderId')
+  @ApiOperation({ summary: 'Cancel an order' })
+  @ApiParam({
+    type: String,
+    name: 'orderId',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+    description: 'Id of the order',
+  })
+  @ApiOkResponse({
+    type: Order,
+    description: 'Order successfully canceled',
+  })
+  cancelOrder(@Param('orderId') orderId: string): Promise<Order> {
+    return this.ordersService.cancelOrder(orderId);
   }
 
   //* CHANGE ORDER STATUS (DELIVERY PERSON)
@@ -104,5 +164,22 @@ export class OrdersController {
     @Param('orderId') orderId: string,
   ): Promise<Order> {
     return this.ordersService.updateOrder(order, orderId);
+  }
+
+  //* DELETE ORDER (ADMIN)
+  @Delete('/delete/:orderId')
+  @ApiOperation({ summary: 'Delete an order by its ID' })
+  @ApiParam({
+    type: String,
+    name: 'orderId',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+    description: 'Id of the order',
+  })
+  @ApiOkResponse({
+    status: 204,
+    description: 'Order successfully deleted',
+  })
+  deleteOrder(@Param('orderId') orderId: string): Promise<void> {
+    return this.ordersService.deleteOrder(orderId);
   }
 }

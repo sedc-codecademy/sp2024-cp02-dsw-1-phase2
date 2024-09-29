@@ -11,9 +11,11 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { OrderProduct } from './orders-products.entity';
 
 @Entity()
 export class Order {
@@ -148,14 +150,8 @@ export class Order {
   userId: string;
 
   // * PRODUCT RELATION
-  @ManyToMany(() => Product, (product) => product.orders)
-  @JoinTable({
-    name: 'orders_products',
-    joinColumn: { name: 'order_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'product_id', referencedColumnName: 'id' },
-  })
-  @ApiProperty({ type: () => Product, isArray: true })
-  products: Product[];
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.order)
+  orderProduct: OrderProduct[];
 
   // * Created At
   @CreateDateColumn({

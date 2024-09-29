@@ -9,6 +9,14 @@ async function bootstrap() {
   app.setGlobalPrefix('/api');
   app.enableCors();
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      forbidUnknownValues: true,
+      whitelist: true,
+    }),
+  );
+
   const config = new DocumentBuilder()
     .setTitle('Qintronics')
     .setDescription('Managing online dropshipping business')

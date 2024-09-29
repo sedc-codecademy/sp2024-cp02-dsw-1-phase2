@@ -2,13 +2,32 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
-  IsDate,
   IsDateString,
   IsNotEmpty,
   IsNumber,
   IsString,
   IsUUID,
 } from 'class-validator';
+
+export class ProductAndQuantity {
+  @IsUUID('4')
+  @IsNotEmpty()
+  @ApiProperty({
+    type: 'string',
+    description: 'The UUID of the product',
+    example: '2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88',
+  })
+  productId: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({
+    type: 'number',
+    description: 'The quantity of the product',
+    example: 2,
+  })
+  quantity: number;
+}
 
 export class OrderCreateDto {
   @IsString()
@@ -61,12 +80,13 @@ export class OrderCreateDto {
   })
   userId: string;
   @IsArray()
-  @IsUUID('4', { each: true })
   @IsNotEmpty()
   @ApiProperty({
-    type: [String],
+    type: [ProductAndQuantity],
     description: 'List of product IDs in UUID format',
-    example: ['2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88'],
+    example: [
+      { productId: '2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88', quantity: 2 },
+    ],
   })
-  products: string[];
+  prodAndQuant: ProductAndQuantity[];
 }
