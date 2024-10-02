@@ -3,69 +3,60 @@ import {
   Controller,
   Param,
   ParseUUIDPipe,
-  Post,
   Put,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBody,
-  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiOperation,
+  ApiOkResponse,
   ApiParam,
-  ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { NoSensitiveUserInfo } from './dtos/no-sensitive-user-info.dto';
-import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
-import { UserInfo } from './user-info.entity';
-import { UserInfoService } from './user-info.service';
-import { JwtGuard } from 'src/common/guards/jwt.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info.dto';
+import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
+import { UserInfoService } from './user-info.service';
 
-@UsePipes(
-  new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    forbidUnknownValues: true,
-  }),
-)
+@UseGuards(JwtGuard, RolesGuard)
 @Controller('user-info')
 @ApiTags('User Info')
 export class UserInfoController {
   constructor(private readonly userInfoService: UserInfoService) {}
 
-  @UseGuards(JwtGuard, RolesGuard)
   @Roles([Role.Admin, Role.DeliveryPerson, Role.Customer]) // Can other roles see their profile info, or just customer?
-  @Put(':userId') // userId will be found from token??
+  @Put(':id') // When accessing /me page, all user info will be sent, including the user info ID, so the front end can send it as a route param
   @ApiParam({
     type: String,
-    name: 'userId',
-    description: 'User ID',
+    name: 'id',
+    description: 'User Info ID',
     example: '991ecd9f-e438-4e56-9231-c68510d31b37',
   })
   @ApiBody({ type: UpdateUserInfoDto })
-  @ApiResponse({
-    status: 200,
-    type: NoSensitiveUserInfo,
-    description: 'The info of the user with the requested ID is updated',
+  @ApiOkResponse({
+    type: NoSensitiveUserInfoResponse,
+    description: 'User has been updated.',
   })
-  @ApiNotFoundResponse({ description: 'User does not exist!' })
+  @ApiBadRequestResponse({
+    description: 'Invalid route parameter or invalid body information.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  @ApiNotFoundResponse({ description: 'User info does not exist.' })
   async updateUserInfo(
-    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateUserInfoDto,
-  ): Promise<NoSensitiveUserInfo> {
-    return this.userInfoService.updateUserInfo(userId, body);
-  }
-
-  @Post('init-customer-info')
-  @ApiOperation({ summary: 'Initialize customer info' })
-  @ApiCreatedResponse({ description: 'Customer info has been created.' })
-  backfillCustomerInfo(): Promise<UserInfo> {
-    return this.userInfoService.backfillCustomerInfo();
+  ): Promise<NoSensitiveUserInfoResponse> {
+    return this.userInfoService.updateUserInfo(id, body);
   }
 }

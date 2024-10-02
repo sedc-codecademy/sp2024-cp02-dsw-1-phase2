@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -133,14 +130,4 @@ export class UserInfo {
     example: '2024-05-01 00:00:00',
   })
   deletedAt: Date;
-
-  // This works just for delete from the query builder, and has nothing to do with softRemove
-  @OneToOne(() => User, (user) => user.userInfo, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({
-    name: 'user_id',
-    referencedColumnName: 'id',
-  })
-  userId: string;
 }

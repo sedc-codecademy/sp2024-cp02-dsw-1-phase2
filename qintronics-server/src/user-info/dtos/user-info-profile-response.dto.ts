@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { NoSensitiveUserInfoResponse } from './no-sensitive-user-info.dto';
 import { Expose } from 'class-transformer';
 
-export class NoSensitiveUserInfoResponse {
+export class UserInfoProfileResponse extends NoSensitiveUserInfoResponse {
   @Expose()
   @ApiProperty({
     type: String,
@@ -57,4 +58,12 @@ export class NoSensitiveUserInfoResponse {
     example: 'Macedonia',
   })
   country: string;
+
+  @Expose()
+  @ApiProperty({
+    type: String,
+    description: `Card number`,
+    example: '0123495678012345',
+  })
+  ccNum: string;
 }

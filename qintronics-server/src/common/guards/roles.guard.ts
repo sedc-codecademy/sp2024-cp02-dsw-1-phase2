@@ -9,6 +9,10 @@ export class RolesGuard implements CanActivate {
   canActivate(
     ctx: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    const isPublic = this.reflector.get('public', ctx.getHandler());
+
+    if (isPublic) return true;
+
     const allowedRoles = this.reflector.getAllAndMerge('roles', [
       ctx.getClass(),
       ctx.getHandler(),

@@ -50,7 +50,7 @@ export class Order {
     name: 'user_id',
   })
   @ApiProperty({
-    type: User,
+    type: () => User,
   })
   user: User;
 

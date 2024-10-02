@@ -8,7 +8,7 @@ export class RegisterDto extends LoginDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(2)
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     type: String,
     description: `User's name`,
@@ -18,7 +18,9 @@ export class RegisterDto extends LoginDto {
   name: string;
 
   @IsNotEmpty()
+  @IsString()
   @IsEnum(Role)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     enum: Role,
     description: `User's role`,

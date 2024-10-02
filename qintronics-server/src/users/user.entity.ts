@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -63,19 +64,20 @@ export class User {
     isArray: true,
     description: `User's refresh tokens`,
     example: [
-      'https://jwt.io/#debugger-io?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjdmZTI2NC04MjliLTQ5YTYtOTk2OS0xNTRmYjFmMTUyMzciLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwicmVmcmVzaFRva2VucyI6W10sImlhdCI6MTcyNzUzMzAxMCwiZXhwIjoxNzI4MTM3ODEwLCJpc3MiOiJRaW50cm9uaWNzIn0.i0AdtjMZS_58gsRL6ybELVNykqWmxTfqKG-onJJN-34',
     ],
   })
   refreshTokens: string[] = [];
   // Refresh tokens are an array in case the user logs in from multiple devices, i.e. multiple refresh tokens are saved
 
-  @OneToOne(() => UserInfo, (userInfo) => userInfo.userId, { cascade: true })
+  @OneToOne(() => UserInfo, { cascade: true })
+  @JoinColumn({ name: 'user_info_id' })
   userInfo: UserInfo;
 
   @OneToMany(() => Order, (order) => order.user)
   @ApiPropertyOptional({
-    type: Order,
+    type: () => [Order],
   })
   orders: Order[];
 

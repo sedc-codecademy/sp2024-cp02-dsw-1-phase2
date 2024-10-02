@@ -1,8 +1,8 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
   ApiBody,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -10,16 +10,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { NoSensitiveUser } from 'src/users/dtos/no-sensitive-user.dto';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { NoSensitiveUserResponse } from 'src/users/dtos/no-sensitive-user-response.dto';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dtos/login.dto';
-import { RegisterDto } from './dtos/register.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
+import { LoginDto } from './dtos/login.dto';
+import { LogoutDto } from './dtos/logout.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RefreshTokensResponse } from './dtos/refresh-tokens-response.dto';
-import { LogoutDto } from './dtos/logout.dto';
+import { RegisterDto } from './dtos/register.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -30,23 +29,24 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a user' })
   @ApiBody({ type: RegisterDto })
   @ApiCreatedResponse({ description: 'User has been registered.' })
-  @ApiBadRequestResponse({ description: 'User already exists.' })
-  register(@Body() body: RegisterDto): Promise<NoSensitiveUser> {
+  @ApiBadRequestResponse({ description: 'Invalid body information.' })
+  @ApiConflictResponse({ description: 'User already exists.' })
+  register(@Body() body: RegisterDto): Promise<NoSensitiveUserResponse> {
     return this.authService.register(body);
   }
 
   @Post('login')
-  @UseGuards(AuthGuard('local'))
   @ApiOperation({ summary: 'Log in a user' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
     status: 200,
     description: 'User has successfully logged in.',
   })
+  @ApiBadRequestResponse({ description: 'Invalid body information.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials.' })
-  login(@CurrentUser() loggedUser: ICurrentUser): Promise<LoginResponseDto> {
-    return this.authService.login(loggedUser);
+  login(@Body() body: LoginDto): Promise<LoginResponseDto> {
+    return this.authService.login(body);
   }
 
   @Post('refresh-tokens')
@@ -63,13 +63,15 @@ export class AuthController {
     return this.authService.refreshTokens(refreshToken);
   }
 
+  @UseGuards(JwtGuard)
   @Post('logout')
   @ApiOperation({ summary: 'Log out a user' })
-  @ApiBody({ type: RefreshTokenDto })
+  @ApiBody({ type: LogoutDto })
   @ApiResponse({
     status: 200,
     description: 'User has successfully logged out.',
   })
+  @ApiUnauthorizedResponse({ description: 'Invalid token.' })
   logout(@Body() body: LogoutDto): Promise<void> {
     return this.authService.logout(body);
   }

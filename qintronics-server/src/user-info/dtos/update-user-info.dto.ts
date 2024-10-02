@@ -15,11 +15,23 @@ import {
   Max,
 } from 'class-validator';
 
-// userId should never be modified
 export class UpdateUserInfoDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @MinLength(2)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @ApiProperty({
+    type: String,
+    description: `User's name`,
+    example: 'Marija',
+  })
+  name?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     type: String,
     description: `User's phone number`,
@@ -30,6 +42,7 @@ export class UpdateUserInfoDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     type: String,
     description: `User's address`,
@@ -40,6 +53,8 @@ export class UpdateUserInfoDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @MinLength(2)
+  @Transform(({ value }) => value.trim())
   @ApiProperty({
     type: String,
     description: `User's city`,
@@ -50,7 +65,7 @@ export class UpdateUserInfoDto {
   @IsOptional()
   @IsNotEmpty()
   @IsInt()
-  @Min(0)
+  @Min(1)
   @ApiProperty({
     type: Number,
     description: `User's postal code`,
@@ -61,6 +76,8 @@ export class UpdateUserInfoDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @MinLength(4)
+  @Transform(({ value }) => value.trim())
   @ApiProperty({
     type: String,
     description: `User's country`,
@@ -78,7 +95,7 @@ export class UpdateUserInfoDto {
     description: `Card name`,
     example: 'Jane Doe',
   })
-  fullName?: string;
+  ccFullName?: string;
 
   @IsOptional()
   @IsNotEmpty()
@@ -86,8 +103,9 @@ export class UpdateUserInfoDto {
   @IsNumberString()
   @Length(16, 16)
   @Matches(/^(34|37|4|5|6)/, {
-    message: 'Card number must start with 34, 37, 4, 5 or 6',
+    message: 'ccNum must start with 34, 37, 4, 5 or 6',
   })
+  @Transform(({ value }) => value.trim())
   @ApiProperty({
     type: String,
     description: `Card number`,

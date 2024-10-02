@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
-import { UserInfo } from 'src/user-info/user-info.entity';
-import { UsersService } from 'src/users/users.service';
-import { UserInfoService } from 'src/user-info/user-info.service';
-import { LocalStrategy } from './local.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserInfo } from 'src/user-info/user-info.entity';
+import { UserInfoService } from 'src/user-info/user-info.service';
+import { User } from 'src/users/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
@@ -30,12 +29,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    UsersService,
-    UserInfoService,
-    LocalStrategy,
-    JwtStrategy,
-  ],
+  providers: [AuthService, UsersService, UserInfoService, JwtStrategy],
 })
 export class AuthModule {}

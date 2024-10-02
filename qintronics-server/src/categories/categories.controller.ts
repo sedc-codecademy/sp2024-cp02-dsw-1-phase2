@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import {
@@ -23,6 +24,14 @@ import { Category } from './category.entity';
 import { CategoryResponseDto } from './dtos/category-response.dto';
 import { CategoryUpdateDto } from './dtos/category-update.dto';
 import { CategoryQueryDto } from './dtos/category-query.dto';
+import { JwtGuard } from 'src/common/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/roles.enum';
+import { PublicRoute } from 'src/common/decorators/public-route.decorator';
+
+@UseGuards(JwtGuard, RolesGuard)
+@Roles([Role.Admin])
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
@@ -80,6 +89,7 @@ export class CategoriesController {
   }
 
   // ========== BACKFILL CATEGORIES ==========
+  @PublicRoute()
   @Post('/backfill')
   @ApiOperation({ summary: 'Backfill Categories' })
   @ApiOkResponse({
