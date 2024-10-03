@@ -36,7 +36,7 @@ import { PublicRoute } from 'src/common/decorators/public-route.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Roles([Role.Admin])
+  @Roles(Role.Admin)
   @Get()
   @ApiOperation({ summary: 'Get all users and their info' })
   @ApiOkResponse({ description: 'All users are retrieved.' })
@@ -56,7 +56,7 @@ export class UsersController {
     );
   }
 
-  @Roles([Role.Customer]) // Can other roles see their profile, or just customer?
+  @Roles(Role.Customer) // Can other roles see their profile, or just customer?
   @Get('me/:id')
   @ApiOperation({ summary: 'Get a user and their info' })
   @ApiOkResponse({ description: 'User has been retrieved.' })
@@ -78,7 +78,7 @@ export class UsersController {
     });
   }
 
-  @Roles([Role.Admin])
+  @Roles(Role.Admin)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({

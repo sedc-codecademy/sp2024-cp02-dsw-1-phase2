@@ -44,7 +44,8 @@ export class UsersService {
       relations: { userInfo: true },
     });
 
-    foundUser.userInfo.ccNum = `************${foundUser.userInfo.ccNum.slice(-4)}`;
+    if (foundUser.userInfo.ccNum)
+      foundUser.userInfo.ccNum = `************${foundUser.userInfo.ccNum.slice(-4)}`;
 
     return foundUser;
   }

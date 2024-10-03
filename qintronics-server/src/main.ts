@@ -16,6 +16,14 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      forbidUnknownValues: true,
+      whitelist: true,
+    }),
+  );
+
   const config = new DocumentBuilder()
     .setTitle('Qintronics')
     .setDescription('Managing online dropshipping business')
