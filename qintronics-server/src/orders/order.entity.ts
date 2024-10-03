@@ -16,6 +16,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderProduct } from './orders-products.entity';
+import { Transform } from 'class-transformer';
 
 @Entity()
 export class Order {
@@ -105,9 +106,20 @@ export class Order {
   })
   zip: number;
 
+  // * ORDER ADDRESS
+  @Column({
+    nullable: true,
+  })
+  @ApiProperty({
+    type: String,
+    description: 'Order city',
+    example: 'Skopje 1',
+  })
+  city: string;
+
   // * PREFERRED DELIVERY DATE
   @Column({
-    type: Date,
+    type: 'date',
     name: 'delivery_date',
   })
   @ApiProperty({

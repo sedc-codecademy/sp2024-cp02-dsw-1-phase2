@@ -17,28 +17,18 @@ import {
 } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { Order } from './order.entity';
-import { OrderCreateDto } from './dtos/order-create.dto';
+import { OrderCreateDto, ProductAndQuantity } from './dtos/order-create.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
 import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { OrderQueryDto } from './dtos/order-query.dto';
+import { OrderProduct } from './orders-products.entity';
 
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
-
-  //* GET ALL ORDERS
-  // @Get('/')
-  // @ApiOperation({ summary: 'Retrieve all orders' })
-  // @ApiOkResponse({
-  //   type: [Order],
-  //   description: 'Orders successfully retrieved',
-  // })
-  // getAll(): Promise<Order[]> {
-  //   return this.ordersService.getAll();
-  // }
 
   //* GET ALL ORDERS W/ QUERIES AND PAGINATION
   @Get('/')

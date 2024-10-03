@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { SortingOrder } from 'src/common/enums/sorting.enum';
 
 export class OrderQueryDto {
@@ -13,6 +21,17 @@ export class OrderQueryDto {
   userMail?: string;
 
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @ApiPropertyOptional({
+    type: Number,
+    description: 'Get order by order number',
+    example: 15,
+  })
+  orderNumber?: number;
+
+  @IsOptional()
   @IsEnum(SortingOrder)
   @ApiPropertyOptional({
     description: 'Sort orders by total price',
@@ -21,14 +40,14 @@ export class OrderQueryDto {
   })
   sortTotal?: SortingOrder;
 
-  // @IsOptional()
-  // @IsEnum(SortingOrder)
-  // @ApiPropertyOptional({
-  //   description: 'Sort orders by preferred delivery date',
-  //   enum: SortingOrder,
-  //   enumName: 'sortingOrder',
-  // })
-  // sortDate?: SortingOrder;
+  @IsOptional()
+  @IsEnum(SortingOrder)
+  @ApiPropertyOptional({
+    description: 'Sort orders by preferred delivery date',
+    enum: SortingOrder,
+    enumName: 'sortingOrder',
+  })
+  sortDelDate?: SortingOrder;
 
   @IsOptional()
   @ApiPropertyOptional({

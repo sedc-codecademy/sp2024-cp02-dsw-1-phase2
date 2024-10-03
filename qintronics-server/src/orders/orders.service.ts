@@ -10,7 +10,7 @@ import {
   In,
   Repository,
 } from 'typeorm';
-import { OrderCreateDto } from './dtos/order-create.dto';
+import { OrderCreateDto, ProductAndQuantity } from './dtos/order-create.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
@@ -19,6 +19,8 @@ import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { PageMetaDto } from 'src/common/ordersPagination/page-meta.dto';
 import { OrderQueryDto } from './dtos/order-query.dto';
 import { SortingOrder } from 'src/common/enums/sorting.enum';
+
+// CURRENT USER na updated by i na createdby
 
 @Injectable()
 export class OrdersService {
@@ -30,8 +32,12 @@ export class OrdersService {
   ) {}
 
   // * CALCULATE TOTAL
-  updateTotal(products: Product[]): number {
-    return products.reduce((acc, product) => acc + product.price, 0);
+  updateTotal(products: Product[], prodAndQuant: ProductAndQuantity[]): number {
+    return products.reduce((acc, product) => {
+      const productQuantity =
+        prodAndQuant.find((pq) => pq.productId === product.id)?.quantity || 1;
+      return acc + product.price * productQuantity;
+    }, 0);
   }
 
   // * ADD PRODUCT TO ORDER
@@ -75,6 +81,8 @@ export class OrdersService {
       isTaken,
       isCancelled,
       isPaid,
+      orderNumber,
+      sortDelDate,
     }: OrderQueryDto,
   ): Promise<PageDto<Order>> {
     let whereQuery = {} satisfies FindOptionsWhere<Order>;
@@ -84,13 +92,13 @@ export class OrdersService {
     isTaken ? (whereQuery = { ...whereQuery, isTaken }) : {};
     isCancelled ? (whereQuery = { ...whereQuery, isCancelled }) : {};
     isPaid ? (whereQuery = { ...whereQuery, isPaid }) : {};
-
-    if (userMail) {
-      whereQuery = {
-        ...whereQuery,
-        user: { email: ILike(`%${userMail}%`) },
-      };
-    }
+    orderNumber ? (whereQuery = { ...whereQuery, orderNumber }) : {};
+    userMail
+      ? (whereQuery = {
+          ...whereQuery,
+          user: { email: ILike(`%${userMail}%`) },
+        })
+      : {};
 
     if (sortTotal) {
       sortTotal === SortingOrder.ASC
@@ -98,16 +106,28 @@ export class OrdersService {
         : (orderQuery = { ...orderQuery, total: 'DESC' });
     }
 
+    if (sortDelDate) {
+      sortDelDate === SortingOrder.ASC
+        ? (orderQuery = { ...orderQuery, deliveryDate: 'ASC' })
+        : (orderQuery = { ...orderQuery, deliveryDate: 'DESC' });
+    }
+
     const [entities, itemCount] = await this.ordersRepository.findAndCount({
       where: whereQuery,
       order: orderQuery,
-      relations: ['orderProduct', 'user'],
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+        user: true,
+      },
       skip: paginationQueries.skip,
       take: paginationQueries.perPage,
     });
 
     const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
     console.log('pageMetaDto', pageMetaDto);
+    console.log('queries', whereQuery, orderQuery);
     return new PageDto(entities, pageMetaDto);
   }
 
@@ -154,16 +174,14 @@ export class OrdersService {
     products.forEach((product) => {
       productPriceMap.set(product.id, product.price);
     });
-    console.log('product price map', productPriceMap);
 
-    const total = this.updateTotal(products);
+    const total = this.updateTotal(products, body.prodAndQuant);
 
     const order = {
       ...body,
       isTaken: false,
       isDelivered: false,
       isCanceled: false,
-      orderDate: new Date(),
       total,
     };
 
@@ -178,7 +196,7 @@ export class OrdersService {
     return createdOrder;
   }
 
-  // * CANCEL ORDER (USER, ADMIN)
+  // * CANCEL ORDER (USER)
   async cancelOrder(orderId: string): Promise<Order> {
     const orderToBeCanceled = await this.ordersRepository.findOneBy({
       id: orderId,
@@ -212,31 +230,29 @@ export class OrdersService {
   }
 
   //* UPDATE ORDER (ADMIN)
-  async updateOrder(body: OrderUpdateDto, orderId: string): Promise<Order> {
-    const { products: productIds, ...orderData } = body;
-
-    let order = await this.ordersRepository.findOne({
+  async updateOrder(
+    updateBody: OrderUpdateDto,
+    orderId: string,
+  ): Promise<Order> {
+    const order = await this.ordersRepository.findOne({
       where: { id: orderId },
-      relations: ['products'],
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+      },
     });
 
     if (!order) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    let updatedOrder = {
+    let updatedData = {
       ...order,
-      ...orderData,
+      ...updateBody,
     };
-    if (productIds.length > 0) {
-      const products = await this.productsRepository.findBy({
-        id: In(productIds),
-      });
 
-      // updatedOrder.orde = products;
-      updatedOrder.total = this.updateTotal(products);
-    }
-
+    const updatedOrder = this.ordersRepository.merge(order, updatedData);
     return this.ordersRepository.save(updatedOrder);
   }
 

@@ -1,14 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
   IsBoolean,
   IsDateString,
   IsNumber,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator';
 import { StatusUpdateDto } from './status-update.dto';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class OrderUpdateDto extends StatusUpdateDto {
   @IsString()
@@ -61,14 +59,4 @@ export class OrderUpdateDto extends StatusUpdateDto {
     example: true,
   })
   isCancelled?: boolean;
-
-  @IsArray()
-  @IsUUID('4', { each: true })
-  @IsOptional()
-  @ApiProperty({
-    type: [String],
-    description: 'List of product IDs in UUID format',
-    example: ['2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88'],
-  })
-  products?: string[];
 }
