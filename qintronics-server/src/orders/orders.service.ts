@@ -1,26 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
+import { SortingOrder } from 'src/common/enums/sorting.enum';
+import { PageMetaDto } from 'src/common/ordersPagination/page-meta.dto';
+import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
+import { PageDto } from 'src/common/ordersPagination/page.dto';
+import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { Order } from 'src/orders/order.entity';
 import { Product } from 'src/products/product.entity';
 import {
-  FindOptions,
   FindOptionsOrder,
   FindOptionsWhere,
   ILike,
   In,
   Repository,
 } from 'typeorm';
-import { OrderCreateDto, ProductAndQuantity } from './dtos/order-create.dto';
+import { OrderCreateDto, ProductsAndQuantity } from './dtos/order-create.dto';
+import { OrderQueryDto } from './dtos/order-query.dto';
+import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
-import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
-import { PageDto } from 'src/common/ordersPagination/page.dto';
-import { PageMetaDto } from 'src/common/ordersPagination/page-meta.dto';
-import { OrderQueryDto } from './dtos/order-query.dto';
-import { SortingOrder } from 'src/common/enums/sorting.enum';
-
-// CURRENT USER na updated by i na createdby
 
 @Injectable()
 export class OrdersService {
@@ -32,10 +36,14 @@ export class OrdersService {
   ) {}
 
   // * CALCULATE TOTAL
-  updateTotal(products: Product[], prodAndQuant: ProductAndQuantity[]): number {
+  updateTotal(
+    products: Product[],
+    productsAndQuantity: ProductsAndQuantity[],
+  ): number {
     return products.reduce((acc, product) => {
       const productQuantity =
-        prodAndQuant.find((pq) => pq.productId === product.id)?.quantity || 1;
+        productsAndQuantity.find((pq) => pq.productId === product.id)
+          ?.quantity || 1;
       return acc + product.price * productQuantity;
     }, 0);
   }
@@ -58,8 +66,10 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
+    if (!product || product.availability < quantity) {
+      throw new NotFoundException(
+        'Product not found or does not have enough stock',
+      );
     }
 
     const orderProduct = this.orderProductsRepository.create({
@@ -75,22 +85,22 @@ export class OrdersService {
   async getAll(
     paginationQueries: PageOptionsDto,
     {
-      userMail,
       sortTotal,
+      userMail,
       isDelivered,
       isTaken,
-      isCancelled,
+      isCanceled,
       isPaid,
       orderNumber,
       sortDelDate,
     }: OrderQueryDto,
-  ): Promise<PageDto<Order>> {
+  ): Promise<PageDto<OrderReturnDto>> {
     let whereQuery = {} satisfies FindOptionsWhere<Order>;
     let orderQuery = {} satisfies FindOptionsOrder<Order>;
 
     isDelivered ? (whereQuery = { ...whereQuery, isDelivered }) : {};
     isTaken ? (whereQuery = { ...whereQuery, isTaken }) : {};
-    isCancelled ? (whereQuery = { ...whereQuery, isCancelled }) : {};
+    isCanceled ? (whereQuery = { ...whereQuery, isCanceled }) : {};
     isPaid ? (whereQuery = { ...whereQuery, isPaid }) : {};
     orderNumber ? (whereQuery = { ...whereQuery, orderNumber }) : {};
     userMail
@@ -108,8 +118,8 @@ export class OrdersService {
 
     if (sortDelDate) {
       sortDelDate === SortingOrder.ASC
-        ? (orderQuery = { ...orderQuery, deliveryDate: 'ASC' })
-        : (orderQuery = { ...orderQuery, deliveryDate: 'DESC' });
+        ? (orderQuery = { ...orderQuery, prefDeliveryDate: 'ASC' })
+        : (orderQuery = { ...orderQuery, prefDeliveryDate: 'DESC' });
     }
 
     const [entities, itemCount] = await this.ordersRepository.findAndCount({
@@ -126,9 +136,18 @@ export class OrdersService {
     });
 
     const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
-    console.log('pageMetaDto', pageMetaDto);
-    console.log('queries', whereQuery, orderQuery);
-    return new PageDto(entities, pageMetaDto);
+    const transformedOrders = entities.map((order) => {
+      const dto = plainToInstance(OrderReturnDto, order, {
+        excludeExtraneousValues: true,
+      });
+
+      dto.productsAndQuantity = order.orderProduct.map((op) => ({
+        product: op.product,
+        quantity: op.quantity,
+      }));
+      return dto;
+    });
+    return new PageDto(transformedOrders, pageMetaDto);
   }
 
   // * GET ORDER BY ID
@@ -138,7 +157,6 @@ export class OrdersService {
         orderProduct: {
           product: true,
         },
-        user: true,
       },
       where: { id: orderId },
     });
@@ -147,27 +165,30 @@ export class OrdersService {
     return orderByID;
   }
 
-  //* GET ORDER BY USER ID
+  //* GET ORDERS BY USER ID
   async getOrdersByUserId(userId: string): Promise<Order[]> {
     const ordersOfUser = await this.ordersRepository.find({
       relations: {
         orderProduct: {
           product: true,
         },
-        user: true,
       },
       where: {
         userId,
       },
     });
-    if (!ordersOfUser) throw new NotFoundException('No orders by this user');
+    if (!ordersOfUser || ordersOfUser.length < 1)
+      throw new NotFoundException('No orders by this user');
     return ordersOfUser;
   }
 
   //* CREATE ORDER
-  async createOrder(body: OrderCreateDto): Promise<Order> {
+  async createOrder(
+    body: OrderCreateDto,
+    currentUser: ICurrentUser,
+  ): Promise<Order> {
     const products = await this.productsRepository.findBy({
-      id: In(body.prodAndQuant.map((product) => product.productId)),
+      id: In(body.productsAndQuantity.map((product) => product.productId)),
     });
 
     const productPriceMap = new Map<string, number>();
@@ -175,10 +196,11 @@ export class OrdersService {
       productPriceMap.set(product.id, product.price);
     });
 
-    const total = this.updateTotal(products, body.prodAndQuant);
+    const total = this.updateTotal(products, body.productsAndQuantity);
 
     const order = {
       ...body,
+      userId: currentUser?.userId,
       isTaken: false,
       isDelivered: false,
       isCanceled: false,
@@ -188,7 +210,7 @@ export class OrdersService {
     const newOrder = this.ordersRepository.create(order);
     const createdOrder = await this.ordersRepository.save(newOrder);
 
-    for (const { productId, quantity } of body.prodAndQuant) {
+    for (const { productId, quantity } of body.productsAndQuantity) {
       const price = productPriceMap.get(productId);
       await this.addProductToOrder(createdOrder.id, productId, quantity, price);
     }
@@ -197,17 +219,30 @@ export class OrdersService {
   }
 
   // * CANCEL ORDER (USER)
-  async cancelOrder(orderId: string): Promise<Order> {
-    const orderToBeCanceled = await this.ordersRepository.findOneBy({
-      id: orderId,
+  async cancelOrder(
+    orderId: string,
+    user: ICurrentUser | undefined,
+  ): Promise<Order> {
+    const orderToBeCanceled = await this.ordersRepository.findOne({
+      where: { id: orderId },
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+      },
     });
 
     if (!orderToBeCanceled) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('No such order');
+    }
+
+    if (orderToBeCanceled.userId !== user?.userId && user?.role !== 'Admin') {
+      throw new UnauthorizedException('Not authorized to cancel this order');
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeCanceled, {
-      isCancelled: true,
+      isCanceled: true,
+      lastUpdatedBy: user?.email,
     });
     return this.ordersRepository.save(updatedOrder);
   }
@@ -216,9 +251,15 @@ export class OrdersService {
   async updateOrderStatus(
     status: StatusUpdateDto,
     orderId: string,
+    user: ICurrentUser | undefined,
   ): Promise<Order> {
-    const orderToBeUpdated = await this.ordersRepository.findOneBy({
-      id: orderId,
+    const orderToBeUpdated = await this.ordersRepository.findOne({
+      where: { id: orderId },
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+      },
     });
 
     if (!orderToBeUpdated) {
@@ -226,6 +267,7 @@ export class OrdersService {
     }
 
     const updatedOrder = this.ordersRepository.merge(orderToBeUpdated, status);
+    updatedOrder.lastUpdatedBy = user?.email;
     return this.ordersRepository.save(updatedOrder);
   }
 
@@ -233,6 +275,7 @@ export class OrdersService {
   async updateOrder(
     updateBody: OrderUpdateDto,
     orderId: string,
+    user: ICurrentUser | undefined,
   ): Promise<Order> {
     const order = await this.ordersRepository.findOne({
       where: { id: orderId },
@@ -253,6 +296,7 @@ export class OrdersService {
     };
 
     const updatedOrder = this.ordersRepository.merge(order, updatedData);
+    updatedOrder.lastUpdatedBy = user?.email;
     return this.ordersRepository.save(updatedOrder);
   }
 

@@ -12,12 +12,14 @@ import {
 import { ProductsService } from './products.service';
 import {
   ApiBody,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ProductResponseDto } from './dtos/product-response.dto';
 import { Product } from './product.entity';
@@ -31,7 +33,7 @@ import { Role } from 'src/common/enums/roles.enum';
 import { PublicRoute } from 'src/common/decorators/public-route.decorator';
 
 @UseGuards(JwtGuard, RolesGuard)
-@Roles([Role.Admin])
+@Roles(Role.Admin)
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
@@ -115,6 +117,12 @@ export class ProductsController {
     description: 'Product created successfully.',
     type: Product,
   })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
   @ApiBody({
     type: ProductCreateDto,
   })
@@ -128,6 +136,12 @@ export class ProductsController {
   @ApiOkResponse({
     description: 'Product updated successfully.',
     type: Product,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
   })
   @ApiParam({
     name: 'id',
@@ -150,6 +164,12 @@ export class ProductsController {
   @ApiResponse({
     status: 204,
     description: 'Product deleted successfully.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
   })
   @ApiParam({
     name: 'id',

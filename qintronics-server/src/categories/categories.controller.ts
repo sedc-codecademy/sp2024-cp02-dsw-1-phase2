@@ -31,7 +31,7 @@ import { Role } from 'src/common/enums/roles.enum';
 import { PublicRoute } from 'src/common/decorators/public-route.decorator';
 
 @UseGuards(JwtGuard, RolesGuard)
-@Roles([Role.Admin])
+@Roles(Role.Admin)
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {

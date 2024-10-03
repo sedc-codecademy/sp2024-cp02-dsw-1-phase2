@@ -1,13 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { SortingOrder } from 'src/common/enums/sorting.enum';
 
 export class OrderQueryDto {
@@ -71,7 +64,7 @@ export class OrderQueryDto {
     description: 'Filter orders by active status',
     example: false,
   })
-  isCancelled?: boolean;
+  isCanceled?: boolean;
 
   @IsOptional()
   @ApiPropertyOptional({

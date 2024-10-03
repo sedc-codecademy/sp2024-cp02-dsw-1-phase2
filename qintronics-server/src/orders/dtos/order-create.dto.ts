@@ -9,7 +9,8 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class ProductAndQuantity {
+// * Class needed for the Order and Product Relation
+export class ProductsAndQuantity {
   @IsUUID('4')
   @IsNotEmpty()
   @ApiProperty({
@@ -34,7 +35,7 @@ export class OrderCreateDto {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'Customer Street Address',
+    description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })
   address: string;
@@ -42,7 +43,7 @@ export class OrderCreateDto {
   @IsNotEmpty()
   @ApiProperty({
     type: String,
-    description: 'Customer City',
+    description: 'Order address city',
     example: 'Skopje',
   })
   city: string;
@@ -50,7 +51,7 @@ export class OrderCreateDto {
   @IsNotEmpty()
   @ApiProperty({
     type: Number,
-    description: 'Customer Zip number',
+    description: 'Order address zip number',
     example: 1000,
   })
   zip: number;
@@ -61,32 +62,24 @@ export class OrderCreateDto {
     description: 'Preferred delivery date of the order',
     example: '2024-09-30',
   })
-  deliveryDate: string;
+  prefDeliveryDate: string;
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     type: Boolean,
     description:
-      'Payment status - true if paid by card, false if paid by cash on delivery',
+      'Order Payment Status, true if the order is paid online, false if cash on delivery',
     example: true,
   })
   isPaid: boolean;
-  @IsUUID()
-  @IsNotEmpty()
-  @ApiProperty({
-    type: String,
-    description: 'ID of the user who made the order in UUID format',
-    example: '2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88',
-  })
-  userId: string;
   @IsArray()
   @IsNotEmpty()
   @ApiProperty({
-    type: [ProductAndQuantity],
-    description: 'List of product IDs in UUID format',
+    type: [ProductsAndQuantity],
+    description: 'List of product IDs in UUID format alongside their quantity',
     example: [
       { productId: '2a7dc9f8-40ca-4d0e-a897-2f6a55ccbd88', quantity: 2 },
     ],
   })
-  prodAndQuant: ProductAndQuantity[];
+  productsAndQuantity: ProductsAndQuantity[];
 }

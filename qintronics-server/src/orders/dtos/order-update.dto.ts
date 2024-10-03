@@ -13,7 +13,7 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: String,
-    description: 'Customer Street Address',
+    description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })
   address?: string;
@@ -21,7 +21,7 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: String,
-    description: 'Customer City',
+    description: 'Order address city',
     example: 'Skopje',
   })
   city?: string;
@@ -29,7 +29,7 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: Number,
-    description: 'Customer Zip number',
+    description: 'Order address zip code',
     example: 1000,
   })
   zip?: number;
@@ -37,16 +37,16 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: Date,
-    description: 'Preferred delivery date of the order',
+    description: 'Preferred date of delivery',
     example: '2024-09-30',
   })
-  deliveryDate?: string;
+  prefDeliveryDate?: string;
   @IsBoolean()
   @IsOptional()
   @ApiProperty({
     type: Boolean,
     description:
-      'Payment status - true if paid by card, false if paid by cash on delivery',
+      'Order Payment Status, true if the order is paid online, false if cash on delivery',
     example: true,
   })
   isPaid?: boolean;
@@ -55,8 +55,9 @@ export class OrderUpdateDto extends StatusUpdateDto {
   @IsOptional()
   @ApiProperty({
     type: Boolean,
-    description: 'Order Canceling Status',
+    description:
+      'Order Canceling Status, true if order is canceled, can be canceled by the user or the admin',
     example: true,
   })
-  isCancelled?: boolean;
+  isCanceled?: boolean;
 }

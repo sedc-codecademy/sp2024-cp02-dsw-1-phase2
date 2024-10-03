@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Product } from 'src/products/product.entity';
 import { User } from 'src/users/user.entity';
 import {
   Column,
@@ -8,15 +7,12 @@ import {
   Entity,
   Generated,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderProduct } from './orders-products.entity';
-import { Transform } from 'class-transformer';
 
 @Entity()
 export class Order {
@@ -36,7 +32,7 @@ export class Order {
   @Generated('increment')
   @ApiProperty({
     type: Number,
-    description: 'Order Number',
+    description: 'Simple numeric order numbering, auto-generated',
     example: 202,
   })
   orderNumber: number;
@@ -48,22 +44,24 @@ export class Order {
   })
   @ApiProperty({
     type: Boolean,
-    description: 'Order Processing Status',
+    description:
+      'Order Processing Status, true if order is processed and taken by the delivery service',
     example: true,
   })
   isTaken: boolean;
 
   // * ORDER CANCELING STATUS
   @Column({
-    name: 'is_cancelled',
+    name: 'is_canceled',
     default: false,
   })
   @ApiProperty({
     type: Boolean,
-    description: 'Order Canceling Status',
+    description:
+      'Order Canceling Status, true if order is canceled, can be canceled by the user or the admin',
     example: true,
   })
-  isCancelled: boolean;
+  isCanceled: boolean;
 
   // * ORDER DELIVERY STATUS
   @Column({
@@ -72,7 +70,8 @@ export class Order {
   })
   @ApiProperty({
     type: Boolean,
-    description: 'Order Delivery Status',
+    description:
+      'Order Delivery Status, true if the order is delivered, the order is then completed. Set by the delivery person',
     example: true,
   })
   isDelivered: boolean;
@@ -83,7 +82,8 @@ export class Order {
   })
   @ApiProperty({
     type: Boolean,
-    description: 'Order Payment Status',
+    description:
+      'Order Payment Status, true if the order is paid online, false if cash on delivery',
     example: true,
   })
   isPaid: boolean;
@@ -92,7 +92,7 @@ export class Order {
   @Column()
   @ApiProperty({
     type: String,
-    description: 'Order address',
+    description: 'Street address and home number of the order',
     example: 'Partizanska 1',
   })
   address: string;
@@ -112,8 +112,8 @@ export class Order {
   })
   @ApiProperty({
     type: String,
-    description: 'Order city',
-    example: 'Skopje 1',
+    description: 'Order address city',
+    example: 'Skopje',
   })
   city: string;
 
@@ -127,7 +127,7 @@ export class Order {
     description: 'Preferred date of delivery',
     example: '2024-11-21',
   })
-  deliveryDate: Date;
+  prefDeliveryDate: Date;
 
   // * TOTAL PRICE
   @Column({
@@ -135,7 +135,8 @@ export class Order {
   })
   @ApiProperty({
     type: Number,
-    description: 'Total price of the order',
+    description:
+      'Total price of the order calculated based on the individual product prices and quantities',
     example: 2000,
   })
   total: number;
@@ -146,6 +147,7 @@ export class Order {
     name: 'user_id',
   })
   @ApiProperty({
+    description: 'User that made the order',
     type: () => User,
   })
   user: User;
@@ -156,7 +158,7 @@ export class Order {
   })
   @ApiProperty({
     type: String,
-    description: 'The ID of the user',
+    description: 'The ID of the user that made the order',
     example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
   })
   userId: string;

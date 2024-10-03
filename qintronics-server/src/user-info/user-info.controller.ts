@@ -30,7 +30,7 @@ import { UserInfoService } from './user-info.service';
 export class UserInfoController {
   constructor(private readonly userInfoService: UserInfoService) {}
 
-  @Roles([Role.Admin, Role.DeliveryPerson, Role.Customer]) // Can other roles see their profile info, or just customer?
+  @Roles(Role.Customer) // Can other roles see their profile info, or just customer?
   @Put(':id') // When accessing /me page, all user info will be sent, including the user info ID, so the front end can send it as a route param
   @ApiParam({
     type: String,
