@@ -25,6 +25,7 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
+import { OrderEmailService } from 'src/email/order-email.service';
 
 @Injectable()
 export class OrdersService {
@@ -33,6 +34,7 @@ export class OrdersService {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(OrderProduct)
     private orderProductsRepository: Repository<OrderProduct>,
+    private emailService: OrderEmailService,
   ) {}
 
   // * CALCULATE TOTAL
@@ -214,7 +216,10 @@ export class OrdersService {
       const price = productPriceMap.get(productId);
       await this.addProductToOrder(createdOrder.id, productId, quantity, price);
     }
-
+    await this.emailService.welcomeEmail({
+      email: currentUser?.email,
+      name: 'Nikola',
+    });
     return createdOrder;
   }
 

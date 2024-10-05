@@ -7,6 +7,7 @@ import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { UserInfoModule } from './user-info/user-info.module';
 import { UsersModule } from './users/users.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from './users/users.module';
     CategoriesModule,
     UsersModule,
     UserInfoModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [],
