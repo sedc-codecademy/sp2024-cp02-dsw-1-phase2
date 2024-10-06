@@ -83,9 +83,6 @@ export class User {
 
   @OneToOne(() => UserInfo, { cascade: true })
   @JoinColumn({ name: 'user_info_id' })
-  @ApiProperty({
-    type: UserInfo,
-  })
   userInfo: UserInfo;
 
   @OneToMany(() => Order, (order) => order.user)
