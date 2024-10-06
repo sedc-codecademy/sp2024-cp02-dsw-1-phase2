@@ -39,7 +39,10 @@ export class UsersController {
   @Roles(Role.Admin)
   @Get()
   @ApiOperation({ summary: 'Get all users and their info' })
-  @ApiOkResponse({ description: 'All users are retrieved.' })
+  @ApiOkResponse({
+    type: [NoSensitiveUserResponse],
+    description: 'All users are retrieved.',
+  })
   @ApiUnauthorizedResponse({
     description: 'User needs to be logged in to access this page.',
   })
@@ -59,7 +62,10 @@ export class UsersController {
   @Roles(Role.Customer) // Can other roles see their profile, or just customer?
   @Get('me/:id')
   @ApiOperation({ summary: 'Get a user and their info' })
-  @ApiOkResponse({ description: 'User has been retrieved.' })
+  @ApiOkResponse({
+    type: UserProfileResponse,
+    description: 'User has been retrieved.',
+  })
   @ApiBadRequestResponse({ description: 'Invalid route parameter.' })
   @ApiUnauthorizedResponse({
     description: 'User needs to be logged in to access this page.',
@@ -99,7 +105,10 @@ export class UsersController {
   @PublicRoute()
   @Post('init-users')
   @ApiOperation({ summary: 'Initialize first users' })
-  @ApiCreatedResponse({ description: 'First users have been created.' })
+  @ApiCreatedResponse({
+    type: [User],
+    description: 'First users have been created.',
+  })
   backfillUsers(): Promise<User[]> {
     return this.usersService.backfillUsers();
   }

@@ -20,7 +20,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info.dto';
+import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfoService } from './user-info.service';
 

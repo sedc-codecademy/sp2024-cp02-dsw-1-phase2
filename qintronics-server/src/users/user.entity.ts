@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Role } from 'src/common/enums/roles.enum';
 import { Order } from 'src/orders/order.entity';
 import { UserInfo } from 'src/user-info/user-info.entity';
@@ -55,6 +55,7 @@ export class User {
   role: Role;
 
   @Column({
+    name: 'refresh_tokens',
     type: String,
     array: true,
     nullable: true,
@@ -71,19 +72,26 @@ export class User {
   refreshTokens: string[] = [];
   // Refresh tokens are an array in case the user logs in from multiple devices, i.e. multiple refresh tokens are saved
 
+  @Column({ name: 'reset_password_token', nullable: true })
+  @ApiProperty({
+    type: String,
+    description: `User's reset password token`,
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
+  })
+  resetPasswordToken: string;
+
   @OneToOne(() => UserInfo, { cascade: true })
   @JoinColumn({ name: 'user_info_id' })
+  @ApiProperty({
+    type: UserInfo,
+  })
   userInfo: UserInfo;
 
   @OneToMany(() => Order, (order) => order.user)
-  @ApiPropertyOptional({
-    type: () => [Order],
-  })
   orders: Order[];
 
-  @CreateDateColumn({
-    name: 'created_at',
-  })
+  @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({
     type: Date,
     description: 'The time and date the user is created at',
@@ -91,9 +99,7 @@ export class User {
   })
   createdAt: Date;
 
-  @DeleteDateColumn({
-    name: 'deleted_at',
-  })
+  @DeleteDateColumn({ name: 'deleted_at' })
   @ApiProperty({
     type: Date,
     description: 'The time and date the user is deleted at',
