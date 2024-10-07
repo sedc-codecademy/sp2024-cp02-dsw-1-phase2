@@ -78,7 +78,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassword(email: string) {
+  async forgotPassword(email: string): Promise<void> {
     const foundUser = await this.usersService.getUserByEmail(email);
 
     const resetPasswordToken =
@@ -89,10 +89,11 @@ export class AuthService {
       resetPasswordToken,
     );
 
-    // await this.emailService.sendResetPasswordEmail(
-    //   foundUser.email,
-    //   resetPasswordToken,
-    // );
+    await this.emailService.sendResetPasswordEmail(
+      foundUser.email,
+      foundUser.userInfo.name,
+      resetPasswordToken,
+    );
   }
 
   async resetPassword({ token, password }: ResetPasswordDto): Promise<void> {
