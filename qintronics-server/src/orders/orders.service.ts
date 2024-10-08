@@ -39,6 +39,44 @@ export class OrdersService {
     private emailService: EmailService,
   ) {}
 
+  // * FIND USER BY ID
+  async findUserById(userId: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['userInfo'],
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  // * ORDER CONFIRMATION MAILING FUNCTION
+  async sendConfirmationEmail(
+    orderDetails: Order,
+    userId: string,
+    productsAndQuantity: ProductsAndQuantity[],
+  ): Promise<void> {
+    const user = await this.findUserById(userId);
+    const productDetails = [];
+    for (const product of productsAndQuantity) {
+      const productEntity = await this.productsRepository.findOne({
+        where: { id: product.productId },
+      });
+
+      productDetails.push({
+        productName: productEntity?.name,
+        quantity: product.quantity,
+      });
+    }
+    await this.emailService.sendOrderConfirmationEmail(
+      user.email,
+      user.userInfo?.name,
+      orderDetails,
+      productDetails,
+    );
+  }
+
   // * CALCULATE TOTAL
   updateTotal(
     products: Product[],
@@ -218,10 +256,13 @@ export class OrdersService {
       const price = productPriceMap.get(productId);
       await this.addProductToOrder(createdOrder.id, productId, quantity, price);
     }
-    // await this.emailService.welcomeEmail({
-    //   email: currentUser?.email,
-    //   name: 'Nikola',
-    // });
+
+    await this.sendConfirmationEmail(
+      createdOrder,
+      currentUser?.userId,
+      body.productsAndQuantity,
+    );
+
     return createdOrder;
   }
 
@@ -251,6 +292,14 @@ export class OrdersService {
       isCanceled: true,
       lastUpdatedBy: user?.email,
     });
+    const wholeUser = await this.findUserById(user?.userId);
+    console.log(wholeUser);
+    await this.emailService.sendOrderCancelationEmail(
+      wholeUser.email,
+      wholeUser.userInfo?.name,
+      updatedOrder,
+    );
+
     return this.ordersRepository.save(updatedOrder);
   }
 

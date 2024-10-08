@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+      }
+      .header {
+        background: linear-gradient(to right, #1bd8c4, #1a3f6b);
+        border-radius: 5px;
+        color: #f3f3f3;
+        padding: 10px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      .content {
+        padding: 20px;
+        padding-bottom: 0;
+      }
+      .order-details {
+        margin: 40px 0 40px 0;
+      }
+      .product {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .address-details {
+        padding: 20px;
+        padding-top: 0;
+        border-radius: 5px;
+      }
+
+      .notification {
+        text-align: center;
+        font-size: 0.9rem;
+      }
+      .notification a,
+      .notification h2,
+      .footer a {
+        color: #2dd9c4;
+        text-decoration: none;
+      }
+      .notification a:hover,
+      .footer a:hover {
+        font-weight: 800;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 5px;
+        }
+        .content,
+        .header,
+        .footer {
+          padding: 5px;
+        }
+        .header {
+          font-size: 1rem;
+        }
+      }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <p>Your order is on its way!</p>
+      </div>
+      <div class="content">
+        <p>
+          Hey, <%= locals.name %>. Your order
+          <strong>#<%= locals.orderDetails.orderNumber %></strong> has been
+          successfully placed. The preferred delivery date of
+          this order is <strong> <%= locals.orderDetails.prefDeliveryDate %></strong>.
+        </p>
+        <div class="order-details">
+          <h3>Order Details:</h3>
+          <% locals.items.forEach(function(product) { %>
+          <div class="product">
+            <p>
+              <strong>Product:</strong> <%= product.productName %> |
+              <strong>Quantity:</strong> <%= product.quantity %>
+            </p>
+          </div>
+          <% }) %>
+          <p><strong>Total:</strong> $<%= locals.orderDetails.total %></p>
+        </div>
+      </div>
+      <div class="address-details">
+        <h3>Shipping Address:</h3>
+        <p>
+          <%= locals.orderDetails.address %>, <%= locals.orderDetails.zip %>,
+          <%= locals.orderDetails.city %>
+        </p>
+      </div>
+      <div class="notification">
+        <h2>Thank you for your purchase!</h2>
+      </div>
+      <div class="notification">
+        <p>
+          You can follow your orders status on your Qintronics
+          <a href="http://localhost:3000/" target="_blank">profile page.</a>
+        </p>
+      </div>
+      <div class="footer">
+        <p>Qintronics</p>
+        <p>
+          If you have any questions, feel free to contact us through
+          <a href="http://localhost:3000/contact" target="_blank"
+            >our contact form.</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
