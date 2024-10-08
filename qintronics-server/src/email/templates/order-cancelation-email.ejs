@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+      }
+      .header {
+        background: linear-gradient(to right, #1a3f6b, #a62c3a);
+        border-radius: 5px;
+        color: #f3f3f3;
+        padding: 10px;
+        font-size: 1.5rem;
+        text-align: center;
+      }
+      .content {
+        padding: 20px;
+        text-align: center;
+      }
+      .notification {
+        text-align: center;
+      }
+
+      .notification a,
+      .notification h2,
+      .footer a {
+        color: #1a3f6b;
+        text-decoration: none;
+      }
+      .notification a:hover,
+      .footer a:hover {
+        font-weight: 800;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 5px;
+        }
+        .content,
+        .header,
+        .footer {
+          padding: 5px;
+        }
+        .header {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <p>Your order has been canceled</p>
+      </div>
+      <div class="content">
+        <p>
+          Hi, <%= locals.name %>. We're sorry to inform you that your order
+          <strong>#<%= locals.orderDetails.orderNumber %></strong> has been
+          canceled. If you believe this is a mistake, please reach out to our
+          support team.
+        </p>
+      </div>
+      <div class="notification">
+        <h2>Can't wait to have you back!</h2>
+      </div>
+      <div class="notification">
+        <p>
+          If you'd like to place a new order, please visit
+          <a href="http://localhost:3000/" target="_blank">Qintronics</a> any
+          time soon.
+        </p>
+      </div>
+      <div class="footer">
+        <p>Qintronics</p>
+        <p>
+          For any questions, feel free to contact us through
+          <a href="http://localhost:3000/contact" target="_blank"
+            >our contact form.</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

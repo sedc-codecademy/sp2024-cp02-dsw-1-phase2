@@ -1,10 +1,11 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { ProductsAndQuantity } from 'src/orders/dtos/order-create.dto';
+import { Order } from 'src/orders/order.entity';
 
 @Injectable()
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
-  о;
   async sendResetPasswordEmail(email: string, name: string, token: string) {
     const subject = 'Reset your password';
 
@@ -13,6 +14,36 @@ export class EmailService {
       subject,
       template: './reset-password-email',
       context: { name, token },
+    });
+  }
+
+  async sendOrderConfirmationEmail(
+    email: string,
+    name: string,
+    orderDetails: Order,
+    items: ProductsAndQuantity[],
+  ) {
+    const subject = `Order #${orderDetails.orderNumber} placement confirmation`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: './order-confirmation-email',
+      context: { name, orderDetails, items },
+    });
+  }
+
+  async sendOrderCancelationEmail(
+    email: string,
+    name: string,
+    orderDetails: Order,
+  ) {
+    const subject = `Order #${orderDetails.orderNumber} cancelation confirmation`;
+    const contextObj = { name, orderDetails };
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: './order-cancelation-email',
+      context: contextObj,
     });
   }
 }
