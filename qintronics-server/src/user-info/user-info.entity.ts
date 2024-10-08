@@ -50,10 +50,7 @@ export class UserInfo {
   })
   city: string;
 
-  @Column({
-    name: 'postal_code',
-    nullable: true,
-  })
+  @Column({ name: 'postal_code', nullable: true })
   @ApiProperty({
     type: Number,
     description: `User's postal code`,
@@ -69,7 +66,7 @@ export class UserInfo {
   })
   country: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'cc_full_name', nullable: true })
   @ApiProperty({
     type: String,
     description: `Card name`,
@@ -77,7 +74,7 @@ export class UserInfo {
   })
   ccFullName: string;
 
-  @Column({ nullable: true, length: 16 })
+  @Column({ name: 'cc_num', nullable: true, length: 16 })
   @ApiProperty({
     type: String,
     description: `Card number`,
@@ -85,7 +82,7 @@ export class UserInfo {
   })
   ccNum: string;
 
-  @Column({ type: Date, nullable: true })
+  @Column({ name: 'exp_date', type: Date, nullable: true })
   @ApiProperty({
     type: Date,
     description: `Card expiration date`,
@@ -101,9 +98,7 @@ export class UserInfo {
   })
   cvv: number;
 
-  @CreateDateColumn({
-    name: 'created_at',
-  })
+  @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({
     type: Date,
     description: 'The time and date the payment info is created at',
@@ -111,9 +106,7 @@ export class UserInfo {
   })
   createdAt: Date;
 
-  @UpdateDateColumn({
-    name: 'updated_at',
-  })
+  @UpdateDateColumn({ name: 'updated_at' })
   @ApiProperty({
     type: Date,
     description: 'The time and date the payment info is updated at',
@@ -121,9 +114,7 @@ export class UserInfo {
   })
   updatedAt: Date;
 
-  @DeleteDateColumn({
-    name: 'deleted_at',
-  })
+  @DeleteDateColumn({ name: 'deleted_at' })
   @ApiProperty({
     type: Date,
     description: 'The time and date the payment info is deleted at',

@@ -1,28 +1,23 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { EmailController } from './email.controller';
-import { OrderEmailService } from './order-email.service';
-import { ResetPasswordEmailService } from './reset-password-email.service';
+import { EmailService } from './email.service';
 
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      imports: [ConfigModule], // Import ConfigModule into MailerModule
-      inject: [ConfigService], // Inject ConfigService
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         transport: {
           service: 'gmail',
           auth: {
-            user: configService.get<string>('EMAIL_USER'), // Get values from ConfigService
-            pass: configService.get<string>('EMAIL_PASSWORD'),
+            user: configService.get('EMAIL_USER'),
+            pass: configService.get('EMAIL_PASSWORD'),
           },
         },
-        // defaults: {
-        //   from: `"Qintronics" <no-reply@qintronics.com>`,
-        // },
         template: {
           dir: join(__dirname, 'templates'),
           adapter: new EjsAdapter(),
@@ -33,7 +28,8 @@ import { ResetPasswordEmailService } from './reset-password-email.service';
       }),
     }),
   ],
-  controllers: [EmailController],
-  providers: [OrderEmailService, ResetPasswordEmailService],
+  controllers: [],
+  providers: [EmailService],
+  exports: [EmailService],
 })
 export class EmailModule {}

@@ -10,8 +10,10 @@ import { PageMetaDto } from 'src/common/ordersPagination/page-meta.dto';
 import { PageOptionsDto } from 'src/common/ordersPagination/page-options.dto';
 import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
+import { EmailService } from 'src/email/email.service';
 import { Order } from 'src/orders/order.entity';
 import { Product } from 'src/products/product.entity';
+import { User } from 'src/users/user.entity';
 import {
   FindOptionsOrder,
   FindOptionsWhere,
@@ -25,7 +27,6 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
-import { OrderEmailService } from 'src/email/order-email.service';
 
 @Injectable()
 export class OrdersService {
@@ -34,7 +35,8 @@ export class OrdersService {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(OrderProduct)
     private orderProductsRepository: Repository<OrderProduct>,
-    private emailService: OrderEmailService,
+    @InjectRepository(User) private usersRepository: Repository<User>,
+    private emailService: EmailService,
   ) {}
 
   // * CALCULATE TOTAL
@@ -216,10 +218,10 @@ export class OrdersService {
       const price = productPriceMap.get(productId);
       await this.addProductToOrder(createdOrder.id, productId, quantity, price);
     }
-    await this.emailService.welcomeEmail({
-      email: currentUser?.email,
-      name: 'Nikola',
-    });
+    // await this.emailService.welcomeEmail({
+    //   email: currentUser?.email,
+    //   name: 'Nikola',
+    // });
     return createdOrder;
   }
 

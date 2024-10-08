@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserInfoDto } from './dtos/create-user-info.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfo } from './user-info.entity';
-import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info.dto';
+import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
 
 @Injectable()
 export class UserInfoService {

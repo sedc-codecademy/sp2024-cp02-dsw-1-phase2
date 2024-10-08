@@ -54,6 +54,7 @@ export class UsersService {
   async getUserByEmail(email: string): Promise<User> {
     const foundUser = await this.userRepository.findOne({
       where: { email },
+      relations: { userInfo: true },
     });
 
     if (!foundUser) throw new NotFoundException(`User does not exist.`);
@@ -86,10 +87,23 @@ export class UsersService {
     return this.userRepository.save(createdUser);
   }
 
+  async saveNewPassword(userId: string, password: string): Promise<void> {
+    password = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
+
+    await this.userRepository.update(userId, {
+      password,
+      resetPasswordToken: null,
+    });
+  }
+
   async saveRefreshToken(user: User, refreshToken: string): Promise<void> {
     await this.userRepository.update(user.id, {
       refreshTokens: [...user.refreshTokens, refreshToken],
     });
+  }
+
+  async saveResetPasswordToken(userId: string, resetPasswordToken) {
+    await this.userRepository.update(userId, { resetPasswordToken });
   }
 
   async removeRefreshToken(user: User, refreshToken: string): Promise<void> {

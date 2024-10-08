@@ -1,24 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { UserInfoService } from 'src/user-info/user-info.service';
 import { NoSensitiveUserResponse } from 'src/users/dtos/no-sensitive-user-response.dto';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { LoginResponseDto } from './dtos/login-response.dto';
+import { LoginDto } from './dtos/login.dto';
+import { LogoutDto } from './dtos/logout.dto';
 import { RefreshTokensResponse } from './dtos/refresh-tokens-response.dto';
 import { RegisterDto } from './dtos/register.dto';
-import { LogoutDto } from './dtos/logout.dto';
-import { LoginDto } from './dtos/login.dto';
-import * as bcrypt from 'bcrypt';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly userInfoService: UserInfoService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(body: RegisterDto): Promise<NoSensitiveUserResponse> {
@@ -55,15 +56,10 @@ export class AuthService {
 
   async refreshTokens(refreshToken: string): Promise<RefreshTokensResponse> {
     try {
-      const { sub: userId, role } = await this.jwtService.verifyAsync(
+      const foundUser = await this.#verifyToken(
         refreshToken,
-        { secret: process.env.JWT_REFRESH_SECRET },
+        process.env.JWT_REFRESH_SECRET,
       );
-
-      const foundUser = await this.usersService.getUserById(userId);
-
-      if (!foundUser || foundUser.role !== role)
-        throw new UnauthorizedException('Invalid token.');
 
       await this.#validateRefreshTokenForUser(foundUser, refreshToken);
 
@@ -76,6 +72,41 @@ export class AuthService {
         newAccessToken,
         newRefreshToken,
       };
+    } catch (error) {
+      // If verification fails
+      throw new UnauthorizedException('Invalid token.');
+    }
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const foundUser = await this.usersService.getUserByEmail(email);
+
+    const resetPasswordToken =
+      await this.#generateResetPasswordToken(foundUser);
+
+    await this.usersService.saveResetPasswordToken(
+      foundUser.id,
+      resetPasswordToken,
+    );
+
+    await this.emailService.sendResetPasswordEmail(
+      foundUser.email,
+      foundUser.userInfo.name,
+      resetPasswordToken,
+    );
+  }
+
+  async resetPassword({ token, password }: ResetPasswordDto): Promise<void> {
+    try {
+      const foundUser = await this.#verifyToken(
+        token,
+        process.env.JWT_RESET_PASSWORD_SECRET,
+      );
+
+      if (foundUser.resetPasswordToken !== token)
+        throw new UnauthorizedException('Invalid token.');
+
+      await this.usersService.saveNewPassword(foundUser.id, password);
     } catch (error) {
       // If verification fails
       throw new UnauthorizedException('Invalid token.');
@@ -112,7 +143,36 @@ export class AuthService {
     };
   }
 
-  async #validateRefreshTokenForUser(user: User, refreshToken) {
+  async #generateResetPasswordToken(user: User) {
+    const resetPasswordToken = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      {
+        expiresIn: process.env.JWT_RESET_PASSWORD_EXPIRATION_TIME,
+        secret: process.env.JWT_RESET_PASSWORD_SECRET,
+      },
+    );
+
+    return resetPasswordToken;
+  }
+
+  async #verifyToken(token, secret) {
+    const { sub: userId, role } = await this.jwtService.verifyAsync(token, {
+      secret,
+    });
+
+    const foundUser = await this.usersService.getUserById(userId);
+
+    if (!foundUser || foundUser.role !== role)
+      throw new UnauthorizedException('Invalid token.');
+
+    return foundUser;
+  }
+
+  async #validateRefreshTokenForUser(user: User, refreshToken: string) {
     const validToken = user.refreshTokens.includes(refreshToken);
 
     if (!validToken) throw new UnauthorizedException('Invalid token.');

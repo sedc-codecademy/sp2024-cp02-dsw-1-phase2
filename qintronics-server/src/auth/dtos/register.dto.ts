@@ -1,7 +1,13 @@
 import { Role } from 'src/common/enums/roles.enum';
 import { LoginDto } from './login.dto';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class RegisterDto extends LoginDto {
@@ -17,15 +23,16 @@ export class RegisterDto extends LoginDto {
   })
   name: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
   @IsEnum(Role)
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: Role,
     description: `User's role`,
     example: Role.Customer,
     default: Role.Customer,
   })
-  role: Role = Role.Customer;
+  role?: Role = Role.Customer;
 }

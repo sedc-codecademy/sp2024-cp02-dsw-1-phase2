@@ -1,18 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
-  IsOptional,
-  IsNotEmpty,
-  IsString,
+  IsDate,
   IsInt,
-  Min,
-  MinLength,
+  IsNotEmpty,
   IsNumberString,
+  IsOptional,
+  IsString,
   Length,
   Matches,
-  IsDate,
-  MinDate,
   Max,
+  Min,
+  MinDate,
+  MinLength,
 } from 'class-validator';
 
 export class UpdateUserInfoDto {
@@ -21,7 +21,7 @@ export class UpdateUserInfoDto {
   @IsString()
   @MinLength(2)
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `User's name`,
     example: 'Marija',
@@ -32,7 +32,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `User's phone number`,
     example: '+3891234578',
@@ -43,7 +43,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `User's address`,
     example: 'Partizanska, bb',
@@ -55,7 +55,7 @@ export class UpdateUserInfoDto {
   @IsString()
   @MinLength(2)
   @Transform(({ value }) => value.trim())
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `User's city`,
     example: 'Skopje',
@@ -66,7 +66,7 @@ export class UpdateUserInfoDto {
   @IsNotEmpty()
   @IsInt()
   @Min(1)
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
     description: `User's postal code`,
     example: 1000,
@@ -78,7 +78,7 @@ export class UpdateUserInfoDto {
   @IsString()
   @MinLength(4)
   @Transform(({ value }) => value.trim())
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `User's country`,
     example: 'Macedonia',
@@ -90,7 +90,7 @@ export class UpdateUserInfoDto {
   @IsString()
   @MinLength(5)
   @Transform(({ value }) => value.trim())
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `Card name`,
     example: 'Jane Doe',
@@ -106,7 +106,7 @@ export class UpdateUserInfoDto {
     message: 'ccNum must start with 34, 37, 4, 5 or 6',
   })
   @Transform(({ value }) => value.trim())
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: `Card number`,
     example: '0123495678012345',
@@ -118,7 +118,7 @@ export class UpdateUserInfoDto {
   @IsDate()
   @MinDate(new Date(), { message: `Expiration date can't be in the past.` })
   @Transform(({ value }) => new Date(value))
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Date,
     description: `Card expiration date`,
     example: '2024-05-01 00:00:00',
@@ -130,7 +130,7 @@ export class UpdateUserInfoDto {
   @IsInt()
   @Min(100)
   @Max(9999)
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
     description: `CVV card number`,
     example: '123 or 1234',
