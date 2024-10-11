@@ -101,178 +101,185 @@ const CardPaymentForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mt-6 sm:p-8 max-w-xl mx-auto">
-      <h2 className="text-2xl font-semibold text-primary mb-4">Card Payment</h2>
+    <div className="card-body">
+      <div className="bg-white rounded-lg shadow-lg p-6 mt-6 sm:p-8 max-w-xl mx-auto">
+        <h2 className="text-2xl font-semibold text-primary mb-4">
+          Card Payment
+        </h2>
 
-      {/* Credit Card Preview */}
-      <div className="container">
-        <div className="card" onClick={() => setIsCardFlipped(!isCardFlipped)}>
-          <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
-            <div className="front">
-              <img
-                src="https://i.ibb.co/PYss3yv/map.png"
-                className="map-img"
-                alt="map"
-              />
-              <div className="row">
+        {/* Credit Card Preview */}
+        <div className="card-container">
+          <div
+            className="card"
+            onClick={() => setIsCardFlipped(!isCardFlipped)}
+          >
+            <div className={`card-inner ${isCardFlipped ? "flipped" : ""}`}>
+              <div className="front">
                 <img
-                  src="https://i.ibb.co/G9pDnYJ/chip.png"
-                  width="60px"
-                  alt="chip"
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
                 />
-                <img
-                  src="https://i.ibb.co/WHZ3nRJ/visa.png"
-                  width="60px"
-                  alt="visa"
-                />
-              </div>
-              <div className="row card-no">
-                <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
-              </div>
-              <div className="row card-holder">
-                <p>CARD HOLDER</p>
-                <p>VALID TILL</p>
-              </div>
-              <div className="row name">
-                <p>{cardData.cardHolderName || "Cardholder Name"}</p>
-                <p>
-                  {cardData.expiryMonth && cardData.expiryYear
-                    ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
-                    : "MM/YY"}
-                </p>
-              </div>
-            </div>
-            <div className="back">
-              <img
-                src="https://i.ibb.co/PYss3yv/map.png"
-                className="map-img"
-                alt="map"
-              />
-              <div className="bar"></div>
-              <div className="row card-cvv">
-                <div>
+                <div className="row">
                   <img
-                    src="https://i.ibb.co/S6JG8px/pattern.png"
-                    alt="pattern"
+                    src="https://i.ibb.co/G9pDnYJ/chip.png"
+                    width="60px"
+                    alt="chip"
+                  />
+                  <img
+                    src="https://i.ibb.co/WHZ3nRJ/visa.png"
+                    width="60px"
+                    alt="visa"
                   />
                 </div>
-                <p>{cardData.cvv || "***"}</p>
+                <div className="row card-no">
+                  <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
+                </div>
+                <div className="row card-holder">
+                  <p>CARD HOLDER</p>
+                  <p>VALID TILL</p>
+                </div>
+                <div className="row name">
+                  <p>{cardData.cardHolderName || "Cardholder Name"}</p>
+                  <p>
+                    {cardData.expiryMonth && cardData.expiryYear
+                      ? `${cardData.expiryMonth} / ${cardData.expiryYear}`
+                      : "MM/YY"}
+                  </p>
+                </div>
               </div>
-              <div className="row card-text"></div>
-              <div className="row signature">
-                <p>CUSTOMER SIGNATURE</p>
+              <div className="back">
                 <img
-                  src="https://i.ibb.co/WHZ3nRJ/visa.png"
-                  width="80px"
-                  alt="visa"
+                  src="https://i.ibb.co/PYss3yv/map.png"
+                  className="map-img"
+                  alt="map"
                 />
+                <div className="bar"></div>
+                <div className="row card-cvv">
+                  <div>
+                    <img
+                      src="https://i.ibb.co/S6JG8px/pattern.png"
+                      alt="pattern"
+                    />
+                  </div>
+                  <p>{cardData.cvv || "***"}</p>
+                </div>
+                <div className="row card-text"></div>
+                <div className="row signature">
+                  <p>CUSTOMER SIGNATURE</p>
+                  <img
+                    src="https://i.ibb.co/WHZ3nRJ/visa.png"
+                    width="80px"
+                    alt="visa"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
+          <div className="relative">
+            <div className="flex items-center">
+              <FaUser className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">
+                Card Holder Name
+              </label>
+            </div>
+            <input
+              type="text"
+              name="cardHolderName"
+              value={cardData.cardHolderName}
+              onChange={handleInputChange}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="Cardholder Name"
+              maxLength={30}
+            />
+          </div>
+
+          <div className="relative">
+            <div className="flex items-center">
+              <FaCreditCard className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Card Number</label>
+            </div>
+            <input
+              type="tel"
+              name="cardNumber"
+              value={cardData.cardNumber}
+              onChange={handleInputChange}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="xxxx xxxx xxxx xxxx"
+              maxLength={19}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative">
+              <BsCalendar2MonthFill className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Expiry Month</label>
+              <input
+                type="text"
+                name="expiryMonth"
+                value={cardData.expiryMonth}
+                onChange={handleInputChange}
+                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                required
+                placeholder="MM"
+                maxLength={2}
+              />
+            </div>
+
+            <div className="relative">
+              <FaCalendarAlt className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">Expiry Year</label>
+              <input
+                type="text"
+                name="expiryYear"
+                value={cardData.expiryYear}
+                onChange={handleInputChange}
+                className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+                required
+                placeholder="YY"
+                maxLength={2}
+              />
+            </div>
+          </div>
+
+          {/* CVV Input */}
+          <div className="relative">
+            <div className="flex items-center">
+              <FaLock className="mr-2 text-secondary text-lg" />
+              <label className="block text-sm text-primary">CVV / CVC</label>
+            </div>
+            <input
+              type="text"
+              name="cvv"
+              value={cardData.cvv}
+              onChange={(e) => {
+                handleInputChange(e);
+                setIsCardFlipped(true);
+              }}
+              onBlur={() => setIsCardFlipped(false)}
+              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
+              required
+              placeholder="* * *"
+              maxLength={3}
+            />
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <button
+              type="submit"
+              className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+            >
+              <TbCreditCardPay className="mr-2" size={18} />
+              Pay Now
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form onSubmit={handlePaymentSubmit} className="space-y-6 mt-8">
-        <div className="relative">
-          <div className="flex items-center">
-            <FaUser className="mr-2 text-secondary text-lg" />
-            <label className="block text-sm text-primary">
-              Card Holder Name
-            </label>
-          </div>
-          <input
-            type="text"
-            name="cardHolderName"
-            value={cardData.cardHolderName}
-            onChange={handleInputChange}
-            className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-            required
-            placeholder="Cardholder Name"
-            maxLength={30}
-          />
-        </div>
-
-        <div className="relative">
-          <div className="flex items-center">
-            <FaCreditCard className="mr-2 text-secondary text-lg" />
-            <label className="block text-sm text-primary">Card Number</label>
-          </div>
-          <input
-            type="tel"
-            name="cardNumber"
-            value={cardData.cardNumber}
-            onChange={handleInputChange}
-            className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-            required
-            placeholder="xxxx xxxx xxxx xxxx"
-            maxLength={19}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="relative">
-            <BsCalendar2MonthFill className="mr-2 text-secondary text-lg" />
-            <label className="block text-sm text-primary">Expiry Month</label>
-            <input
-              type="text"
-              name="expiryMonth"
-              value={cardData.expiryMonth}
-              onChange={handleInputChange}
-              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-              required
-              placeholder="MM"
-              maxLength={2}
-            />
-          </div>
-
-          <div className="relative">
-            <FaCalendarAlt className="mr-2 text-secondary text-lg" />
-            <label className="block text-sm text-primary">Expiry Year</label>
-            <input
-              type="text"
-              name="expiryYear"
-              value={cardData.expiryYear}
-              onChange={handleInputChange}
-              className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-              required
-              placeholder="YY"
-              maxLength={2}
-            />
-          </div>
-        </div>
-
-        {/* CVV Input */}
-        <div className="relative">
-          <div className="flex items-center">
-            <FaLock className="mr-2 text-secondary text-lg" />
-            <label className="block text-sm text-primary">CVV / CVC</label>
-          </div>
-          <input
-            type="text"
-            name="cvv"
-            value={cardData.cvv}
-            onChange={(e) => {
-              handleInputChange(e);
-              setIsCardFlipped(true);
-            }}
-            onBlur={() => setIsCardFlipped(false)}
-            className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
-            required
-            placeholder="* * *"
-            maxLength={3}
-          />
-        </div>
-
-        <div className="mt-6 flex justify-center">
-          <button
-            type="submit"
-            className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
-          >
-            <TbCreditCardPay className="mr-2" size={18} />
-            Pay Now
-          </button>
-        </div>
-      </form>
     </div>
   );
 };

@@ -80,7 +80,7 @@ const CheckoutForm: React.FC = () => {
 
   // Validate individual fields
   const validateField = (name: string, value: string) => {
-    let newErrors = { ...errors };
+    const newErrors = { ...errors };
     switch (name) {
       case "firstName":
       case "lastName":
@@ -158,7 +158,7 @@ const CheckoutForm: React.FC = () => {
       timerProgressBar: true,
       showConfirmButton: false,
     }).then(() => {
-      setIsSubmitted(true); 
+      setIsSubmitted(true);
       navigate("/");
     });
   };
@@ -296,7 +296,9 @@ const CheckoutForm: React.FC = () => {
                 <div className="flex flex-col">
                   <div className="flex items-center space-x-2">
                     <FaHome className="text-secondary" />
-                    <label className="leading-loose text-primary">Address</label>
+                    <label className="leading-loose text-primary">
+                      Address
+                    </label>
                   </div>
                   <div className="relative flex items-center">
                     <input
@@ -311,7 +313,9 @@ const CheckoutForm: React.FC = () => {
                     {renderValidationIcon("address")}
                   </div>
                   {errors.address && (
-                    <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.address}
+                    </p>
                   )}
                 </div>
 
@@ -359,7 +363,9 @@ const CheckoutForm: React.FC = () => {
                     {renderValidationIcon("zipCode")}
                   </div>
                   {errors.zipCode && (
-                    <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.zipCode}
+                    </p>
                   )}
                 </div>
 
@@ -443,7 +449,7 @@ const CheckoutForm: React.FC = () => {
                     className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 text-lg rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
                     onClick={handleConfirmOrder}
                   >
-                    < GiConfirmed className="mr-2" size={18} />
+                    <GiConfirmed className="mr-2" size={18} />
                     Confirm Order
                   </button>
                 </div>

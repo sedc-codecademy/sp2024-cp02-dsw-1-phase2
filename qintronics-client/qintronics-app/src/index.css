@@ -1,6 +1,6 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 .big-circle {
   position: absolute;
@@ -39,4 +39,7 @@ body,
 input,
 textarea {
   font-family: "Roboto", sans-serif;
+}
+body {
+  background-color: #f9fafb;
 }

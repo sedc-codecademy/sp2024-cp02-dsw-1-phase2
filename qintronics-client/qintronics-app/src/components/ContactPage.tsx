@@ -197,13 +197,16 @@ const ContactForm = () => {
           className="space-y-8"
         >
           <div className="bg-white shadow-custom rounded-lg p-8 space-y-4">
-            <h3 className="text-2xl font-semibold text-primary">Get in Touch</h3>
+            <h3 className="text-2xl font-semibold text-primary">
+              Get in Touch
+            </h3>
             <p className="text-gray-600">
               Looking to boost your dropshipping success? Connect with us and
-              transform your business! Whether you're an experienced entrepreneur
-              or just getting started, we're here to offer expert advice, premium
-              products, and exceptional support every step of the way. Reach out
-              today, and let's make your dropshipping venture a triumph!
+              transform your business! Whether you're an experienced
+              entrepreneur or just getting started, we're here to offer expert
+              advice, premium products, and exceptional support every step of
+              the way. Reach out today, and let's make your dropshipping venture
+              a triumph!
             </p>
             <div className="space-y-2">
               <div className="flex items-center">
@@ -224,14 +227,19 @@ const ContactForm = () => {
 
               <div className="flex items-center">
                 <PhoneIcon className="h-6 w-6 text-secondary mr-3" />
-                <a href="tel:+1235235598" className="text-primary hover:underline">
+                <a
+                  href="tel:+1235235598"
+                  className="text-primary hover:underline"
+                >
                   +1235 2355 98
                 </a>
               </div>
 
               <div className="mt-4">
-                <p className="text-2xl font-semibold text-primary flex justify-center items-center">Connect with us:</p>
-                <div className="flex space-x-4 mt-2 flex justify-center items-center">
+                <p className="text-2xl font-semibold text-primary flex justify-center items-center">
+                  Connect with us:
+                </p>
+                <div className="flex space-x-4 mt-2 justify-center items-center">
                   <a
                     href="https://facebook.com"
                     target="_blank"
