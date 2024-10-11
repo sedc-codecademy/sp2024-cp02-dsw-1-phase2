@@ -1,10 +1,15 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Role } from 'src/common/enums/roles.enum';
 import { Order } from 'src/orders/order.entity';
+import { UserInfo } from 'src/user-info/user-info.entity';
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -36,49 +41,6 @@ export class User {
   })
   password: string;
 
-  @Column({ nullable: true })
-  @ApiProperty({
-    type: String,
-    description: `User's phone number`,
-    example: '+3891234578',
-  })
-  phone: string;
-
-  @Column({ nullable: true })
-  @ApiProperty({
-    type: String,
-    description: `User's address`,
-    example: 'Partizanska, bb',
-  })
-  address: string;
-
-  @Column({ nullable: true })
-  @ApiProperty({
-    type: String,
-    description: `User's city`,
-    example: 'Skopje',
-  })
-  city: string;
-
-  @Column({
-    name: 'postal_code',
-    nullable: true,
-  })
-  @ApiProperty({
-    type: Number,
-    description: `User's postal code`,
-    example: 1000,
-  })
-  postalCode: number;
-
-  @Column({ nullable: true })
-  @ApiProperty({
-    type: String,
-    description: `User's country`,
-    example: 'Macedonia',
-  })
-  country: string;
-
   @Column({
     enum: Role,
     enumName: 'role',
@@ -92,9 +54,53 @@ export class User {
   })
   role: Role;
 
-  @OneToMany(() => Order, (order) => order.user)
-  @ApiPropertyOptional({
-    type: Order,
+  @Column({
+    name: 'refresh_tokens',
+    type: String,
+    array: true,
+    nullable: true,
   })
+  @ApiProperty({
+    type: String,
+    isArray: true,
+    description: `User's refresh tokens`,
+    example: [
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYjdmZTI2NC04MjliLTQ5YTYtOTk2OS0xNTRmYjFmMTUyMzciLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwicmVmcmVzaFRva2VucyI6W10sImlhdCI6MTcyNzUzMzAxMCwiZXhwIjoxNzI4MTM3ODEwLCJpc3MiOiJRaW50cm9uaWNzIn0.i0AdtjMZS_58gsRL6ybELVNykqWmxTfqKG-onJJN-34',
+    ],
+  })
+  refreshTokens: string[] = [];
+  // Refresh tokens are an array in case the user logs in from multiple devices, i.e. multiple refresh tokens are saved
+
+  @Column({ name: 'reset_password_token', nullable: true })
+  @ApiProperty({
+    type: String,
+    description: `User's reset password token`,
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJ1c2VySWQiOiI0ZjcxMjhmYi05MGUxLTQ5MzUtOTkzYy00ZGI3YmJhYTQ0ZjYiLCJlbWFpbCI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIiwicm9sZSI6IkN1c3RvbWVyIiwiaWF0IjoxNzI3NzI0OTgxLCJleHAiOjE3Mjc4MTEzODEsImlzcyI6IlFpbnRyb25pY3MifQ.GSwJ-dVxSG7LEcTkLGEFQ8BX9RT5MihZnX_pRurSyG8',
+  })
+  resetPasswordToken: string;
+
+  @OneToOne(() => UserInfo, { cascade: true })
+  @JoinColumn({ name: 'user_info_id' })
+  userInfo: UserInfo;
+
+  @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @CreateDateColumn({ name: 'created_at' })
+  @ApiProperty({
+    type: Date,
+    description: 'The time and date the user is created at',
+    example: '2024-05-01 00:00:00',
+  })
+  createdAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  @ApiProperty({
+    type: Date,
+    description: 'The time and date the user is deleted at',
+    example: '2024-05-01 00:00:00',
+  })
+  deletedAt: Date;
 }

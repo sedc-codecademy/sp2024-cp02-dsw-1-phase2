@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'src/categories/category.entity';
 import { Order } from 'src/orders/order.entity';
+import { OrderProduct } from 'src/orders/orders-products.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +9,7 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -122,9 +124,13 @@ export class Product {
   })
   categoryId: string;
 
-  @ManyToMany(() => Order, (order) => order.products)
-  @ApiProperty({ type: () => Order, isArray: true })
-  orders: Order[];
+  // @ManyToMany(() => Order, (order) => order.products)
+  // @ApiProperty({ type: () => Order, isArray: true })
+  // orders: Order[];
+
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
+  @ApiProperty({ type: () => OrderProduct, isArray: true })
+  orderProduct: OrderProduct[];
 
   @CreateDateColumn()
   @ApiProperty({
