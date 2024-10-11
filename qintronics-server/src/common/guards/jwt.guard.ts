@@ -14,8 +14,6 @@ export class JwtGuard extends AuthGuard('jwt') {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.get('public', ctx.getHandler());
 
-    if (isPublic) return true;
-
-    return super.canActivate(ctx);
+    return isPublic || super.canActivate(ctx);
   }
 }

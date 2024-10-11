@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { CreateUserInfoDto } from './dtos/create-user-info.dto';
+import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfo } from './user-info.entity';
-import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
+import { ICurrentUser } from 'src/common/types/current-user.interface';
+import { DeleteUserInfoDto } from './dtos/delete-user-info.dto';
 
 @Injectable()
 export class UserInfoService {
@@ -22,21 +23,19 @@ export class UserInfoService {
     return this.userInfoRepository.save(createdInfo);
   }
 
-  async updateUserInfo(
-    id: string,
-    body: UpdateUserInfoDto,
-  ): Promise<NoSensitiveUserInfoResponse> {
-    const userInfo = await this.userInfoRepository.findOneBy({ id });
+  async changeUserInfo(
+    currentUser: ICurrentUser,
+    body: UpdateUserInfoDto | DeleteUserInfoDto,
+  ): Promise<UserInfo> {
+    const userInfo = await this.userInfoRepository.findOneBy({
+      userId: { id: currentUser.userId },
+    });
 
-    if (!userInfo)
-      throw new NotFoundException(`User info with id: ${id} does not exist!`);
+    if (!userInfo) throw new NotFoundException(`User does not exist!`);
 
     const infoToUpdate = this.userInfoRepository.merge(userInfo, body);
-    const updatedInfo = await this.userInfoRepository.save(infoToUpdate);
 
-    return plainToInstance(NoSensitiveUserInfoResponse, updatedInfo, {
-      excludeExtraneousValues: true,
-    });
+    return this.userInfoRepository.save(infoToUpdate);
   }
 
   async deleteAllUserInfo(): Promise<void> {

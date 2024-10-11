@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }: JwtStrategyPayload): Promise<ICurrentUser> {
     const foundUser = await this.usersService.getUserById(userId);
 
-    if (!foundUser || foundUser.role !== role)
+    if (!foundUser || foundUser.email !== email || foundUser.role !== role)
       throw new UnauthorizedException('Invalid token.');
 
     return { userId, email, role };
