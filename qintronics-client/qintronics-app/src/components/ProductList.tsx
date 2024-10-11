@@ -28,7 +28,7 @@ const ProductList = ({
   };
 
   return (
-    <div className="bg-gray-100 p-4 sm:p-6 lg:p-8 rounded-lg min-h-screen flex flex-col items-center">
+    <div className="p-4 sm:p-6 lg:p-8 rounded-lg min-h-screen flex flex-col items-center">
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6">
         {title}
       </h1>

@@ -141,11 +141,11 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 w-64 h-full bg-gray-100 transition-transform transform z-50 ${
+        className={`fixed top-0 left-0 w-64 h-full bg-gray-100 transition-transform transform z-49 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:w-64 md:relative flex flex-col`}
       >
-        <div className="p-6 bg-gradient-to-b from-[#1BD8C4] to-[#1A3F6B] rounded-xl shadow-2xl flex flex-col overflow-y-auto h-full">
+        <div className="p-6 bg-gradient-to-b from-[#1BD8C4] to-[#1A3F6B] shadow-2xl flex flex-col overflow-y-auto h-full">
           <h2 className="text-3xl font-extrabold text-white mb-8 tracking-wider">
             Categories
           </h2>

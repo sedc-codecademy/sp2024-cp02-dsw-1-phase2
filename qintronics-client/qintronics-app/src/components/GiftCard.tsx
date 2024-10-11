@@ -12,8 +12,8 @@ import {
   FaGift,
 } from "react-icons/fa";
 import Loader from "./Loader";
-import giftImage from "/gift-bow-removebg-preview.png";
-import barcodeImage from "/barcode.png"; // Static barcode image
+import giftImage from "/images/gift-bow-removebg-preview.png";
+import barcodeImage from "/images/barcode.png"; // Static barcode image
 
 const colorOptions = [
   {
