@@ -14,6 +14,7 @@ import {
 import Loader from "./Loader";
 import giftImage from "/images/gift-bow-removebg-preview.png";
 import barcodeImage from "/images/barcode.png"; // Static barcode image
+import Sidebar from "./Sidebar";
 
 const colorOptions = [
   {
@@ -144,6 +145,8 @@ const GiftCard = () => {
   };
 
   return (
+    <div className="flex">
+      <Sidebar />
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-2 sm:p-4">
       {loading ? (
         <Loader />
@@ -403,7 +406,8 @@ const GiftCard = () => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+      </div>
   );
 };
 

@@ -8,9 +8,12 @@ import FeaturedCategories from "./FeaturedCategories";
 import Testimonials from "./Testimonials";
 import LatestBlogPosts from "./LatestBlogPosts";
 import BrandsShowcase from "./BrandsShowcase";
+import Sidebar from "./Sidebar";
 
 const MainComponent = () => {
   return (
+    <div className="flex">
+      <Sidebar />
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="w-full bg-white py-12">
@@ -118,7 +121,8 @@ const MainComponent = () => {
           <Newsletter />
         </div>
       </section>
-    </div>
+      </div>
+      </div>
   );
 };
 

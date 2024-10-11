@@ -1,25 +1,24 @@
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
-import ContactForm from "./components/ContactPage";
-import OrderPage from "./components/OrderPage";
-import { CardPaymentProvider } from "./context/CardPaymentContext";
-import { useState } from "react";
-import Header from "./components/Header";
-import CompareProducts from "./components/CompareProducts";
-import Dashboard from "./components/Dashboard";
-import MainComponent from "./components/MainComponent";
-import LoginPopup from "./components/LoginPopup";
-import Footer from "./components/Footer";
-import { motion } from "framer-motion";
-import Chatbot from "./components/Chatbot";
 import CategoryPage from "./components/CategoryPage";
+import Chatbot from "./components/Chatbot";
+import CompareProducts from "./components/CompareProducts";
+import ContactForm from "./components/ContactPage";
+import Dashboard from "./components/Dashboard";
+import Footer from "./components/Footer";
 import GiftCard from "./components/GiftCard";
+import Header from "./components/Header";
+import LoginPopup from "./components/LoginPopup";
+import MainComponent from "./components/MainComponent";
+import OrderPage from "./components/OrderPage";
 import ProductDetailsPage from "./components/ProductDetailsPage";
 import ProductList from "./components/ProductList";
 import SalesPage from "./components/SalesPage";
+import { CardPaymentProvider } from "./context/CardPaymentContext";
 import products from "./data/products.json";
-import Sidebar from "./components/Sidebar";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -35,10 +34,7 @@ function App() {
   return (
     <div className="App flex flex-col">
       <Header onLoginClick={toggleLoginPopup} />
-      <div className="flex">
-      <Sidebar />
-      {/* Sidebar for Categories */}
-     
+      
       <div className="content grow">
         <CardPaymentProvider>
           <Routes>
@@ -73,7 +69,7 @@ function App() {
           </Routes>
         </CardPaymentProvider>
         </div>
-        </div>
+        
       <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />
       <Footer />
 

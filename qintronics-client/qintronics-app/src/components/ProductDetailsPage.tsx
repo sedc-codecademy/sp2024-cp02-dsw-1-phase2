@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import Sidebar from "./Sidebar";
 
 const formatKey = (key: string) => {
   return key
@@ -83,7 +84,9 @@ const ProductDetailsPage = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
+    <div className="flex">
+      <Sidebar />
+    <div className="min-h-screen flex justify-center p-4 md:p-8">
       <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[60vh] relative">
         {/* For larger screens, show the discount badge in the top-left corner */}
         {product.discount > 0 && (
@@ -297,7 +300,9 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      </div>
+      
   );
 };
 
