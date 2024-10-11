@@ -13,6 +13,13 @@ import LoginPopup from "./components/LoginPopup";
 import Footer from "./components/Footer";
 import { motion } from "framer-motion";
 import Chatbot from "./components/Chatbot";
+import CategoryPage from "./components/CategoryPage";
+import GiftCard from "./components/GiftCard";
+import ProductDetailsPage from "./components/ProductDetailsPage";
+import ProductList from "./components/ProductList";
+import SalesPage from "./components/SalesPage";
+import products from "./data/products.json";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -20,10 +27,19 @@ function App() {
 
   const toggleLoginPopup = () => setIsLoginPopupOpen(!isLoginPopupOpen);
   const toggleChat = () => setIsChatOpen(!isChatOpen); // Toggle chat window
+
+  const convertedProducts = products.map((product) => ({
+    ...product,
+    price: Number(product.price),
+  }));
   return (
-    <div className="App">
+    <div className="App flex flex-col">
       <Header onLoginClick={toggleLoginPopup} />
-      <div className="content">
+      <div className="flex">
+      <Sidebar />
+      {/* Sidebar for Categories */}
+     
+      <div className="content grow">
         <CardPaymentProvider>
           <Routes>
             <Route path="/cart" element={<CartPage />} />
@@ -33,9 +49,31 @@ function App() {
             <Route path="/" element={<MainComponent />} />
             <Route path="/compare" element={<CompareProducts />} />
             <Route path="/dashboard" element={<Dashboard />} />{" "}
+             {/* Default product list */}
+          <Route
+            path="/products"
+            element={<ProductList productList={convertedProducts} />}
+          />
+
+          {/* Product Details */}
+          <Route path="/products/:id" element={<ProductDetailsPage />} />
+
+          {/* Sales page */}
+          <Route path="/sales" element={<SalesPage />} />
+
+          {/* Category specific pages */}
+              <Route path="/category/:category" element={<CategoryPage />} />
+              
+             
+ {/* Gift Card Page */}
+ <Route path="/category/gift-cards" element={<GiftCard />} />
+              
+
+         
           </Routes>
         </CardPaymentProvider>
-      </div>
+        </div>
+        </div>
       <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />
       <Footer />
 
