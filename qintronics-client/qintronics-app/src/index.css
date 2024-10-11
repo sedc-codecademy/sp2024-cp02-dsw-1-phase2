@@ -1,0 +1,42 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.big-circle {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #06255b, #1bd9c5);
+  bottom: 50%;
+  right: 55%;
+  transform: translate(-40%, 38%);
+  z-index: 0;
+}
+
+.big-circle:after {
+  content: "";
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  background-color: #fafafa;
+  border-radius: 50%;
+  top: calc(50% - 180px);
+  left: calc(50% - 180px);
+}
+
+.square {
+  position: absolute;
+  height: 400px;
+  top: 55%;
+  left: 63%;
+  transform: translate(181%, 11%);
+  opacity: 0.2;
+  z-index: 0;
+}
+
+body,
+input,
+textarea {
+  font-family: "Roboto", sans-serif;
+}
