@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -33,16 +32,13 @@ export class UsersService {
   }
 
   // will everything be returned (even the sensitive info)? If so, make NoSensitiveUser in the controller (will use same function in auth, where refresh tokens are needed, and in NoSensitiveUser they won't be exposed)
-  async getUserProfile(id: string, currentUser: ICurrentUser): Promise<User> {
-    if (id !== currentUser.userId)
-      throw new ForbiddenException(
-        'User does not have permission to access this page.',
-      );
-
+  async getUserProfile(currentUser: ICurrentUser): Promise<User> {
     const foundUser = await this.userRepository.findOne({
-      where: { id, role: Role.Customer }, // Just customer users or?
+      where: { id: currentUser.userId }, // Just customer users or?
       relations: { userInfo: true },
     });
+
+    if (!foundUser) throw new NotFoundException('User does not exist.');
 
     if (foundUser.userInfo.ccNum)
       foundUser.userInfo.ccNum = `************${foundUser.userInfo.ccNum.slice(-4)}`;
@@ -57,7 +53,7 @@ export class UsersService {
       relations: { userInfo: true },
     });
 
-    if (!foundUser) throw new NotFoundException(`User does not exist.`);
+    if (!foundUser) throw new NotFoundException('User does not exist.');
 
     return foundUser;
   }
@@ -112,6 +108,15 @@ export class UsersService {
         (token) => token !== refreshToken,
       ),
     });
+  }
+
+  async changeUserRole(id: string, role: Role): Promise<User> {
+    const foundUser = await this.getUserById(id);
+
+    if (!foundUser)
+      throw new NotFoundException(`User with id: ${id} does not exist!`);
+
+    return this.userRepository.save({ ...foundUser, role });
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -188,6 +193,5 @@ export class UsersService {
     return this.userRepository.find({ relations: { userInfo: true } });
   }
 
-  // update password??
   // can admin search for one particular user?
 }

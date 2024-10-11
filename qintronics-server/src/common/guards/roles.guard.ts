@@ -13,9 +13,9 @@ export class RolesGuard implements CanActivate {
 
     if (isPublic) return true;
 
-    const allowedRoles = this.reflector.getAllAndMerge('roles', [
-      ctx.getClass(),
+    const allowedRoles = this.reflector.getAllAndOverride('roles', [
       ctx.getHandler(),
+      ctx.getClass(),
     ]);
 
     if (!allowedRoles) return true;

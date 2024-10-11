@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -97,6 +99,9 @@ export class UserInfo {
     example: '123 or 1234',
   })
   cvv: number;
+
+  @OneToOne(() => User, (user) => user.userInfo)
+  userId: User;
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({

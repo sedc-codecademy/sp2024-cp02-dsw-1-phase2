@@ -55,7 +55,7 @@ export class UserInfoProfileResponse extends NoSensitiveUserInfoResponse {
   @Expose()
   @ApiResponseProperty({
     type: String,
-    example: '0123495678012345',
+    example: '************2345',
   })
   ccNum: string;
 }

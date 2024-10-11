@@ -1,50 +1,40 @@
-import {
-  Body,
-  Controller,
-  Param,
-  ParseUUIDPipe,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Patch, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { ICurrentUser } from 'src/common/types/current-user.interface';
+import { DeleteUserInfoDto } from './dtos/delete-user-info.dto';
 import { NoSensitiveUserInfoResponse } from './dtos/no-sensitive-user-info-response.dto';
 import { UpdateUserInfoDto } from './dtos/update-user-info.dto';
 import { UserInfoService } from './user-info.service';
 
 @UseGuards(JwtGuard, RolesGuard)
+@Roles(Role.Customer) // Can other roles see their profile info, or just customer?
 @Controller('user-info')
 @ApiTags('User Info')
 export class UserInfoController {
   constructor(private readonly userInfoService: UserInfoService) {}
 
-  @Roles(Role.Customer) // Can other roles see their profile info, or just customer?
-  @Put(':id') // When accessing /me page, all user info will be sent, including the user info ID, so the front end can send it as a route param
-  @ApiParam({
-    type: String,
-    name: 'id',
-    description: 'User Info ID',
-    example: '991ecd9f-e438-4e56-9231-c68510d31b37',
-  })
+  @Patch('update') // When accessing /me page, all user info will be sent, including the user info ID, so the front end can send it as a route param
   @ApiBody({ type: UpdateUserInfoDto })
   @ApiOkResponse({
     type: NoSensitiveUserInfoResponse,
-    description: 'User has been updated.',
+    description: 'User info has been updated.',
   })
   @ApiBadRequestResponse({
-    description: 'Invalid route parameter or invalid body information.',
+    description: 'Invalid body information.',
   })
   @ApiUnauthorizedResponse({
     description: 'User needs to be logged in to access this page.',
@@ -52,11 +42,48 @@ export class UserInfoController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  @ApiNotFoundResponse({ description: 'User info does not exist.' })
+  @ApiNotFoundResponse({ description: 'User does not exist.' })
   async updateUserInfo(
-    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateUserInfoDto,
+    @CurrentUser() currentUser: ICurrentUser,
   ): Promise<NoSensitiveUserInfoResponse> {
-    return this.userInfoService.updateUserInfo(id, body);
+    const userInfo = await this.userInfoService.changeUserInfo(
+      currentUser,
+      body,
+    );
+
+    return plainToInstance(NoSensitiveUserInfoResponse, userInfo, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @Patch('delete')
+  @ApiBody({ type: DeleteUserInfoDto })
+  @ApiOkResponse({
+    type: NoSensitiveUserInfoResponse,
+    description: 'User info has been deleted.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid body information.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  @ApiNotFoundResponse({ description: 'User does not exist.' })
+  async deleteSomeUserInfo(
+    @Body() body: DeleteUserInfoDto,
+    @CurrentUser() currentUser: ICurrentUser,
+  ): Promise<NoSensitiveUserInfoResponse> {
+    const userInfo = await this.userInfoService.changeUserInfo(
+      currentUser,
+      body,
+    );
+
+    return plainToInstance(NoSensitiveUserInfoResponse, userInfo, {
+      excludeExtraneousValues: true,
+    });
   }
 }

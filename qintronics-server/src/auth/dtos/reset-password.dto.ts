@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
+import { IsJWT, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class ResetPasswordDto {
   @IsNotEmpty()
-  @IsString()
+  @IsJWT()
   @ApiProperty({
     type: String,
     description: `User's reset password token`,
