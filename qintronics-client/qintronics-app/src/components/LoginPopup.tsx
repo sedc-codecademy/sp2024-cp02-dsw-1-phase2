@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import ForgotPasswordForm from "./ForgotPasswordForm";
+import axios from "axios";
 
 interface LoginPopupProps {
   isOpen: boolean;
@@ -59,6 +60,17 @@ const LoginPopup = ({ isOpen, onClose }: LoginPopupProps) => {
     setEmail("");
     setPassword("");
     onClose();
+
+    axios
+      .post("http://localhost:3000/api/auth/login", { email, password })
+      .then((res) => {
+        localStorage.setItem("accessToken", res.data.tokens.accessToken);
+        localStorage.setItem("refreshToken", res.data.tokens.refreshToken);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   const handleForgotPasswordEmailSent = (email: string) => {

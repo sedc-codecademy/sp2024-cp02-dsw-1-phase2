@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect, useContext } from "react";
 import {
   FaUser,
   FaEnvelope,
@@ -17,8 +17,10 @@ import Swal from "sweetalert2";
 import { FormErrors } from "../common/interfaces/form.error.interface";
 import { FormData } from "../common/interfaces/form.data.interface";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/auth.context";
 
 const CheckoutForm: React.FC = () => {
+  const { instance } = useContext(AuthContext);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -37,6 +39,28 @@ const CheckoutForm: React.FC = () => {
   const [checkoutValid, setCheckoutValid] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    instance
+      ?.get("/users/me")
+      .then((res) => {
+        console.log(res.data);
+        // const { name, phone, address, city, postalCode } = res.data.userInfo;
+        // const { email } = res.data;
+        // setFormData({
+        //   firstName: name,
+        //   lastName: "",
+        //   email: email,
+        //   phone: phone || "",
+        //   address: address || "",
+        //   city: city || "",
+        //   zipCode: postalCode || "",
+        //   deliveryDay: "",
+        // });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
   // Handle input field changes
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
