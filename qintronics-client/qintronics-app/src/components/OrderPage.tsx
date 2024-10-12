@@ -40,22 +40,23 @@ const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Instance vo order page: ", instance);
     instance
       ?.get("/users/me")
       .then((res) => {
         console.log(res.data);
-        // const { name, phone, address, city, postalCode } = res.data.userInfo;
-        // const { email } = res.data;
-        // setFormData({
-        //   firstName: name,
-        //   lastName: "",
-        //   email: email,
-        //   phone: phone || "",
-        //   address: address || "",
-        //   city: city || "",
-        //   zipCode: postalCode || "",
-        //   deliveryDay: "",
-        // });
+        const { name, phone, address, city, postalCode } = res.data.userInfo;
+        const { email } = res.data;
+        setFormData({
+          firstName: name,
+          lastName: "",
+          email: email,
+          phone: phone || "",
+          address: address || "",
+          city: city || "",
+          zipCode: postalCode || "",
+          deliveryDay: "",
+        });
       })
       .catch((err) => {
         console.error(err);

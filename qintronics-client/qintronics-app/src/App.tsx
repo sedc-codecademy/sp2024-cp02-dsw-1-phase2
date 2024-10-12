@@ -43,10 +43,10 @@ function App() {
             <Routes>
               <Route path="/" element={<MainComponent />} />
               <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<OrderPage />} />
-              {/* <Route element={<PrivateRoute />}>
+              {/* <Route path="/checkout" element={<OrderPage />} /> */}
+              <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<OrderPage />} />
-              </Route> */}
+              </Route>
               <Route path="/payment" element={<CardPaymentForm />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/compare" element={<CompareProducts />} />

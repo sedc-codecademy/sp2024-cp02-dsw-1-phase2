@@ -29,8 +29,10 @@ export default function AuthProvider({ children }: AuthContextProviderType) {
   instance.interceptors.request.use(
     (config) => {
       const accessToken = localStorage.getItem("accessToken");
+      console.log("Access token: ", accessToken);
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
+        console.log("vleguva vo access token");
       }
       return config;
     },
@@ -41,10 +43,12 @@ export default function AuthProvider({ children }: AuthContextProviderType) {
 
   instance.interceptors.response.use(
     (response) => {
+      console.log("User in response data: ", response.data);
       setUser(response.data);
       return response;
     },
     async (error) => {
+      console.log("vleguva vo errr");
       const originalRequest = error.config;
       if (error.response) {
         if (error.response.status === 401 && !originalRequest._retry) {
