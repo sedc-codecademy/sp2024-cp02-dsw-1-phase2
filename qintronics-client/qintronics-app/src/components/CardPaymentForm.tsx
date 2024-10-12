@@ -11,6 +11,17 @@ const CardPaymentForm: React.FC = () => {
   const { cardData, setCardData, handleSubmit } = useCardPayment();
   const navigate = useNavigate();
   const [isCardFlipped, setIsCardFlipped] = useState(false);
+  const [cardType, setCardType] = useState<string>("");
+
+  // Function to detect the card type based on the number
+  const detectCardType = (cardNumber: string) => {
+    const firstDigit = cardNumber[0];
+    const firstTwoDigits = cardNumber.slice(0, 2);
+
+    if (firstDigit === "4") return "Visa";
+    if (firstTwoDigits >= "51" && firstTwoDigits <= "55") return "MasterCard";
+    return ""; // Return empty string if no match
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,6 +33,10 @@ const CardPaymentForm: React.FC = () => {
         ...prevData,
         cardNumber: formattedValue,
       }));
+
+      // Detect card type and set it in state
+      const detectedType = detectCardType(cleaned);
+      setCardType(detectedType);
     } else if (name === "expiryMonth" || name === "expiryYear") {
       const cleaned = value.replace(/\D/g, "");
       setCardData((prevData) => ({
@@ -32,7 +47,7 @@ const CardPaymentForm: React.FC = () => {
       const cleaned = value.replace(/\D/g, "");
       setCardData((prevData) => ({
         ...prevData,
-        cvv: cleaned.slice(0, 3),
+        cvv: cleaned.slice(0, 4), // Limit the CVV to 4 digits
       }));
     } else {
       setCardData((prevData) => ({
@@ -126,11 +141,20 @@ const CardPaymentForm: React.FC = () => {
                     width="60px"
                     alt="chip"
                   />
-                  <img
-                    src="https://i.ibb.co/WHZ3nRJ/visa.png"
-                    width="60px"
-                    alt="visa"
-                  />
+                  {cardType === "Visa" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+                      width="60px"
+                      alt="Visa"
+                    />
+                  )}
+                  {cardType === "MasterCard" && (
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
+                      width="60px"
+                      alt="MasterCard"
+                    />
+                  )}
                 </div>
                 <div className="row card-no">
                   <p>{cardData.cardNumber || "xxxx xxxx xxxx xxxx"}</p>
@@ -162,7 +186,7 @@ const CardPaymentForm: React.FC = () => {
                       alt="pattern"
                     />
                   </div>
-                  <p>{cardData.cvv || "***"}</p>
+                  <p>{cardData.cvv || "****"}</p>
                 </div>
                 <div className="row card-text"></div>
                 <div className="row signature">
@@ -259,13 +283,14 @@ const CardPaymentForm: React.FC = () => {
               value={cardData.cvv}
               onChange={(e) => {
                 handleInputChange(e);
-                setIsCardFlipped(true);
+                setIsCardFlipped(true); // Flip the card when typing
               }}
-              onBlur={() => setIsCardFlipped(false)}
+              onFocus={() => setIsCardFlipped(true)} // Flip the card when clicking into the CVV input
+              onBlur={() => setIsCardFlipped(false)} // Flip back when leaving the CVV input
               className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
               required
-              placeholder="* * *"
-              maxLength={3}
+              placeholder="* * * *"
+              maxLength={4} // Updated to limit to 4 digits
             />
           </div>
 
