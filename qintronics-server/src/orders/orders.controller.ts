@@ -73,7 +73,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -84,7 +84,7 @@ export class OrdersController {
   })
   getOrderById(
     @Param('orderId', ParseUUIDPipe) orderId: string,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.getOrderById(orderId);
   }
 
@@ -100,7 +100,7 @@ export class OrdersController {
     description: 'Id of the user',
   })
   @ApiOkResponse({
-    type: [Order],
+    type: [OrderReturnDto],
     description: 'Orders successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -111,7 +111,7 @@ export class OrdersController {
   })
   getOrdersByUserId(
     @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<Order[]> {
+  ): Promise<OrderReturnDto[]> {
     return this.ordersService.getOrdersByUserId(userId);
   }
 
@@ -123,7 +123,7 @@ export class OrdersController {
     type: OrderCreateDto,
   })
   @ApiCreatedResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully created',
   })
   @ApiUnauthorizedResponse({
@@ -135,7 +135,7 @@ export class OrdersController {
   createOrder(
     @Body() order: OrderCreateDto,
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.createOrder(order, currentUser);
   }
 
@@ -149,7 +149,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully canceled',
   })
   @ApiUnauthorizedResponse({
@@ -161,7 +161,7 @@ export class OrdersController {
   cancelOrder(
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.cancelOrder(orderId, user);
   }
 
@@ -191,7 +191,7 @@ export class OrdersController {
     @Body() status: StatusUpdateDto,
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.updateOrderStatus(status, orderId, user);
   }
   //* UPDATE ORDER (ADMIN)
@@ -207,7 +207,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully updated',
   })
   @ApiUnauthorizedResponse({
@@ -220,7 +220,7 @@ export class OrdersController {
     @Body() order: OrderUpdateDto,
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.updateOrder(order, orderId, user);
   }
 
