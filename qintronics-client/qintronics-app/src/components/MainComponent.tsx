@@ -14,115 +14,116 @@ const MainComponent = () => {
   return (
     <div className="flex">
       <Sidebar />
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-                Discover the Future of Tech
-              </h1>
-              <p className="text-lg text-gray-600 mb-4">
-                Explore our wide range of cutting-edge gadgets and electronics.
-              </p>
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
-                Shop Now
-              </button>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
+        {/* Hero Section */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-1/2 mb-8 md:mb-0">
+                <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
+                  Discover the Future of Tech
+                </h1>
+                <p className="text-lg text-gray-600 mb-4">
+                  Explore our wide range of cutting-edge gadgets and
+                  electronics.
+                </p>
+                <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+                  Shop Now
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Featured Products Slider */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Featured Products
-          </h2>
-          <SliderDiv />
-        </div>
-      </section>
+        {/* Featured Products Slider */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Featured Products
+            </h2>
+            <SliderDiv />
+          </div>
+        </section>
 
-      {/* Featured Categories */}
-      <section className="w-full bg-gray-100 py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Shop by Category
-          </h2>
-          <FeaturedCategories />
-        </div>
-      </section>
+        {/* Featured Categories */}
+        <section className="w-full bg-gray-100 py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Shop by Category
+            </h2>
+            <FeaturedCategories />
+          </div>
+        </section>
 
-      {/* Ad Banner */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <AdBanner
-            title="Summer Sale: Up to 50% Off!"
-            description="Get amazing deals on the latest tech gadgets and accessories."
-            imageUrl="/api/placeholder/800/400"
-          />
-        </div>
-      </section>
+        {/* Ad Banner */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <AdBanner
+              title="Summer Sale: Up to 50% Off!"
+              description="Get amazing deals on the latest tech gadgets and accessories."
+              imageUrl="/api/placeholder/800/400"
+            />
+          </div>
+        </section>
 
-      {/* Best Sellers */}
-      <section className="w-full bg-gray-100 py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Best Sellers
-          </h2>
-          <SlideDiv />
-        </div>
-      </section>
+        {/* Best Sellers */}
+        <section className="w-full bg-gray-100 py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Best Sellers
+            </h2>
+            <SlideDiv />
+          </div>
+        </section>
 
-      {/* New Arrivals */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            New Arrivals
-          </h2>
-          <CardsDiv />
-        </div>
-      </section>
+        {/* New Arrivals */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              New Arrivals
+            </h2>
+            <CardsDiv />
+          </div>
+        </section>
 
-      {/* Testimonials */}
-      <section className="w-full bg-gray-100 py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            What Our Customers Say
-          </h2>
-          <Testimonials />
-        </div>
-      </section>
+        {/* Testimonials */}
+        <section className="w-full bg-gray-100 py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              What Our Customers Say
+            </h2>
+            <Testimonials />
+          </div>
+        </section>
 
-      {/* Latest Blog Posts */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Tech News & Insights
-          </h2>
-          <LatestBlogPosts />
-        </div>
-      </section>
+        {/* Latest Blog Posts */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Tech News & Insights
+            </h2>
+            <LatestBlogPosts />
+          </div>
+        </section>
 
-      {/* Brands Showcase */}
-      <section className="w-full bg-gray-100 py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Featured Brands
-          </h2>
-          <BrandsShowcase />
-        </div>
-      </section>
+        {/* Brands Showcase */}
+        <section className="w-full bg-gray-100 py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Featured Brands
+            </h2>
+            <BrandsShowcase />
+          </div>
+        </section>
 
-      {/* Newsletter */}
-      <section className="w-full bg-white py-12">
-        <div className="container mx-auto px-4">
-          <Newsletter />
-        </div>
-      </section>
+        {/* Newsletter */}
+        <section className="w-full bg-white py-12">
+          <div className="container mx-auto px-4">
+            <Newsletter />
+          </div>
+        </section>
       </div>
-      </div>
+    </div>
   );
 };
 

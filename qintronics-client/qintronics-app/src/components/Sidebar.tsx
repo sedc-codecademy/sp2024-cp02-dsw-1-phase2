@@ -141,7 +141,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 w-64 h-full bg-gray-100 transition-transform transform z-49 ${
+        className={`fixed top-0 left-0 w-64 h-full bg-gray-100 transition-transform transform z-50 md:z-40 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:w-64 md:relative flex flex-col`}
       >
