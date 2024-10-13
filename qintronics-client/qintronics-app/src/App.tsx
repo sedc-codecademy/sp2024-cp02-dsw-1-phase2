@@ -43,8 +43,8 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route element={<PrivateRoute />}>
               <Route path="/checkout" element={<OrderPage />} />
+              <Route path="/payment" element={<CardPaymentForm />} />
             </Route>
-            <Route path="/payment" element={<CardPaymentForm />} />
             <Route path="/contact" element={<ContactForm />} />
             <Route path="/compare" element={<CompareProducts />} />
             <Route path="/dashboard" element={<Dashboard />} />{" "}
