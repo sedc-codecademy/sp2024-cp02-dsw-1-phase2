@@ -6,6 +6,15 @@ export class DeleteUserInfoDto {
   @Equals(null)
   @ApiPropertyOptional({
     type: String,
+    description: `User's last name`,
+    example: null,
+  })
+  lastName?: null;
+
+  @IsOptional()
+  @Equals(null)
+  @ApiPropertyOptional({
+    type: String,
     description: `User's phone number`,
     example: null,
   })

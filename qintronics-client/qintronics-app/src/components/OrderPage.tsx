@@ -1,26 +1,25 @@
-import React, { useState, ChangeEvent, useEffect, useContext } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaHome,
-  FaCity,
-  FaMapMarkerAlt,
   FaCheck,
-  FaTimes,
-  FaMoneyBillWave,
+  FaCity,
   FaCreditCard,
+  FaEnvelope,
+  FaHome,
+  FaMapMarkerAlt,
+  FaMoneyBillWave,
+  FaPhone,
+  FaTimes,
+  FaUser,
 } from "react-icons/fa";
 import { GiConfirmed } from "react-icons/gi";
 import { TbTruckDelivery } from "react-icons/tb";
-import Swal from "sweetalert2";
-import { FormErrors } from "../common/interfaces/form.error.interface";
-import { FormData } from "../common/interfaces/form.data.interface";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/auth.context";
+import Swal from "sweetalert2";
+import { FormData } from "../common/interfaces/form.data.interface";
+import { FormErrors } from "../common/interfaces/form.error.interface";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 const CheckoutForm: React.FC = () => {
-  const { instance } = useContext(AuthContext);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -40,16 +39,17 @@ const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Instance vo order page: ", instance);
-    instance
-      ?.get("/users/me")
+    axiosInstance
+      .get("/users/me")
       .then((res) => {
-        console.log(res.data);
-        const { name, phone, address, city, postalCode } = res.data.userInfo;
-        const { email } = res.data;
+        const {
+          email,
+          userInfo: { firstName, lastName, phone, address, city, postalCode },
+        } = res.data;
+
         setFormData({
-          firstName: name,
-          lastName: "",
+          firstName,
+          lastName: lastName || "",
           email: email,
           phone: phone || "",
           address: address || "",
@@ -59,6 +59,7 @@ const CheckoutForm: React.FC = () => {
         });
       })
       .catch((err) => {
+        // do something if you get error
         console.error(err);
       });
   }, []);

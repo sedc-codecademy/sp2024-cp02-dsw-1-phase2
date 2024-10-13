@@ -91,7 +91,7 @@ export class AuthService {
 
     await this.emailService.sendResetPasswordEmail(
       foundUser.email,
-      foundUser.userInfo.name,
+      foundUser.userInfo.firstName,
       resetPasswordToken,
     );
   }

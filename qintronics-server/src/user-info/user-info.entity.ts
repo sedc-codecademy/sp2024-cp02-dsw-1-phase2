@@ -20,13 +20,21 @@ export class UserInfo {
   })
   id: string;
 
-  @Column()
+  @Column({ name: 'first_name' })
   @ApiProperty({
     type: String,
-    description: `User's name`,
+    description: `User's first name`,
     example: 'Marija',
   })
-  name: string;
+  firstName: string;
+
+  @Column({ name: 'last_name' })
+  @ApiProperty({
+    type: String,
+    description: `User's last name`,
+    example: 'Menchevska',
+  })
+  lastName: string;
 
   @Column({ nullable: true })
   @ApiProperty({

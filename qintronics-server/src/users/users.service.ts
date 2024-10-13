@@ -65,9 +65,12 @@ export class UsersService {
 
     if (existingUser) throw new ConflictException('User already exists!');
 
-    const { name, ...restOfBody } = body;
+    const { firstName, lastName, ...restOfBody } = body;
 
-    const savedUserInfo = await this.userInfoService.createUserInfo({ name });
+    const savedUserInfo = await this.userInfoService.createUserInfo({
+      firstName,
+      lastName,
+    });
 
     restOfBody.password = await bcrypt.hash(
       restOfBody.password,
@@ -140,31 +143,36 @@ export class UsersService {
       {
         email: 'admin@example.com',
         password: 'Admin11!',
-        name: 'Admin',
+        firstName: 'Admin',
+        lastName: 'Adminovski',
         role: Role.Admin,
       },
       {
         email: 'delivery@example.com',
         password: 'Delivery1!',
-        name: 'Delivery',
+        firstName: 'Delivery',
+        lastName: 'Deliveryski',
         role: Role.DeliveryPerson,
       },
       {
         email: 'customer1@example.com',
         password: 'Customer1!',
-        name: 'Customer1',
+        firstName: 'Customer1',
+        lastName: 'Customer1ski',
         role: Role.Customer,
       },
       {
         email: 'customer2@example.com',
         password: 'Customer2!',
-        name: 'Customer2',
+        firstName: 'Customer2',
+        lastName: 'Customer2ski',
         role: Role.Customer,
       },
       {
         email: 'customer3@example.com',
         password: 'Customer3!',
-        name: 'Customer3',
+        firstName: 'Customer3',
+        lastName: 'Customer3ski',
         role: Role.Customer,
       },
     ];
@@ -176,10 +184,11 @@ export class UsersService {
       );
 
       const savedUserInfo = await this.userInfoService.createUserInfo({
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
       });
 
-      const { name, ...restOfUser } = user;
+      const { firstName, lastName, ...restOfUser } = user;
 
       const fullUser = {
         ...restOfUser,

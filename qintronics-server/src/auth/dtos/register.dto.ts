@@ -17,11 +17,23 @@ export class RegisterDto extends LoginDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     type: String,
-    description: `User's name`,
+    description: `User's first name`,
     example: 'Marija',
     minLength: 2,
   })
-  name: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(2)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @ApiProperty({
+    type: String,
+    description: `User's last name`,
+    example: 'Menchevska',
+    minLength: 2,
+  })
+  lastName: string;
 
   @IsOptional()
   @IsNotEmpty()
