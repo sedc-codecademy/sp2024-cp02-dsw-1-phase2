@@ -2,7 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { FaCreditCard, FaCalendarAlt, FaUser, FaLock } from "react-icons/fa";
 import { BsCalendar2MonthFill } from "react-icons/bs";
 import { TbCreditCardPay } from "react-icons/tb";
-import { useCardPayment } from "../context/CardPaymentContext";
+import { useCardPayment } from "../context/card-payment.context";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../styles/card.css";

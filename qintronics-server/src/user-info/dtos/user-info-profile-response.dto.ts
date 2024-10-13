@@ -15,7 +15,14 @@ export class UserInfoProfileResponse extends NoSensitiveUserInfoResponse {
     type: String,
     example: 'Marija',
   })
-  name: string;
+  firstName: string;
+
+  @Expose()
+  @ApiResponseProperty({
+    type: String,
+    example: 'Menchevska',
+  })
+  lastName: string;
 
   @Expose()
   @ApiResponseProperty({

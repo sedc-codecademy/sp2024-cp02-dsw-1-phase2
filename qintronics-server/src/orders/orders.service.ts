@@ -71,7 +71,7 @@ export class OrdersService {
     }
     await this.emailService.sendOrderConfirmationEmail(
       user.email,
-      user.userInfo?.name,
+      user.userInfo?.firstName,
       orderDetails,
       productDetails,
     );
@@ -296,7 +296,7 @@ export class OrdersService {
     console.log(wholeUser);
     await this.emailService.sendOrderCancelationEmail(
       wholeUser.email,
-      wholeUser.userInfo?.name,
+      wholeUser.userInfo?.firstName,
       updatedOrder,
     );
 

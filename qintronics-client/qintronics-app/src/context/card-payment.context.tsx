@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
 interface CardData {
   cardHolderName: string;
@@ -20,15 +20,19 @@ interface CardPaymentContextProps {
   orderAmount: number;
 }
 
-const CardPaymentContext = createContext<CardPaymentContextProps | undefined>(undefined);
+const CardPaymentContext = createContext<CardPaymentContextProps | undefined>(
+  undefined
+);
 
-export const CardPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CardPaymentProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [cardData, setCardData] = useState<CardData>({
-    cardHolderName: '',
-    cardNumber: '',
-    expiryMonth: '',
-    expiryYear: '',
-    cvv: '',
+    cardHolderName: "",
+    cardNumber: "",
+    expiryMonth: "",
+    expiryYear: "",
+    cvv: "",
   });
   const [orderAmount] = useState(0);
 
@@ -56,7 +60,7 @@ export const CardPaymentProvider: React.FC<{ children: React.ReactNode }> = ({ c
 export const useCardPayment = () => {
   const context = useContext(CardPaymentContext);
   if (!context) {
-    throw new Error('useCardPayment must be used within a CardPaymentProvider');
+    throw new Error("useCardPayment must be used within a CardPaymentProvider");
   }
   return context;
 };

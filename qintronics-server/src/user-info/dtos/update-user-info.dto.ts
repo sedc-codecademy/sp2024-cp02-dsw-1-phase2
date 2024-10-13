@@ -23,10 +23,22 @@ export class UpdateUserInfoDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiPropertyOptional({
     type: String,
-    description: `User's name`,
+    description: `User's first name`,
     example: 'Marija',
   })
-  name?: string;
+  firstName?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(2)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @ApiPropertyOptional({
+    type: String,
+    description: `User's last name`,
+    example: 'Menchevska',
+  })
+  lastName?: string;
 
   @IsOptional()
   @IsNotEmpty()
