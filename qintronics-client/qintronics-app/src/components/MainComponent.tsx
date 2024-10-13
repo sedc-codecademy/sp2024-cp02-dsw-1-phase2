@@ -13,7 +13,7 @@ import Sidebar from "./Sidebar";
 const MainComponent = () => {
   return (
     <div className="flex flex-row min-h-screen bg-gray-50">
-      <Sidebar className="flex-shrink-0" />
+      <Sidebar />
       <div className="flex-grow flex flex-col justify-center items-center w-full">
         {/* Hero Section */}
         <section className="w-full bg-white py-12 flex justify-center items-center">
