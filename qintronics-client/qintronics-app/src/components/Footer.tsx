@@ -2,86 +2,124 @@ import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#06255B] text-white py-8">
-      <div className="container mx-auto px-4">
+    <footer className="bg-gradient-to-b from-[#1BD8C4] to-[#1A3F6B] text-white py-10">
+      <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">About Us</h3>
-            <p className="text-sm">
+            <h3 className="text-xl font-bold mb-6">About Us</h3>
+            <p className="text-sm leading-relaxed">
               We are a leading tech retailer offering the latest gadgets and
-              electronics.
+              electronics, bringing the best of innovation to your doorstep.
             </p>
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-6">Quick Links</h3>
+            <ul className="space-y-3">
               <li>
-                <a href="/" className="hover:text-[#23B3B6]">
+                <a
+                  href="/"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Home
                 </a>
               </li>
               <li>
-                <a href="/products" className="hover:text-[#23B3B6]">
+                <a
+                  href="/products"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Products
                 </a>
               </li>
               <li>
-                <a href="/about" className="hover:text-[#23B3B6]">
+                <a
+                  href="/about"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   About
                 </a>
               </li>
               <li>
-                <a href="/contact" className="hover:text-[#23B3B6]">
+                <a
+                  href="/contact"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Contact
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-4">Customer Service</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold mb-6">Customer Service</h3>
+            <ul className="space-y-3">
               <li>
-                <a href="/faq" className="hover:text-[#23B3B6]">
+                <a
+                  href="/faq"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   FAQ
                 </a>
               </li>
               <li>
-                <a href="/shipping" className="hover:text-[#23B3B6]">
+                <a
+                  href="/shipping"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Shipping
                 </a>
               </li>
               <li>
-                <a href="/returns" className="hover:text-[#23B3B6]">
+                <a
+                  href="/returns"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Returns
                 </a>
               </li>
               <li>
-                <a href="/privacy" className="hover:text-[#23B3B6]">
+                <a
+                  href="/privacy"
+                  className="hover:text-[#FFD700] transition-colors duration-300"
+                >
                   Privacy Policy
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-xl font-bold mb-4">Connect With Us</h3>
-            <div className="flex space-x-4">
-              <a href="#" className="hover:text-[#23B3B6]">
-                <Facebook />
+            <h3 className="text-xl font-bold mb-6">Connect With Us</h3>
+            <div className="flex space-x-6">
+              <a
+                href="#"
+                className="hover:text-[#FFD700] transition-transform transform hover:scale-110"
+              >
+                <Facebook size={24} />
               </a>
-              <a href="#" className="hover:text-[#23B3B6]">
-                <Twitter />
+              <a
+                href="#"
+                className="hover:text-[#FFD700] transition-transform transform hover:scale-110"
+              >
+                <Twitter size={24} />
               </a>
-              <a href="#" className="hover:text-[#23B3B6]">
-                <Instagram />
+              <a
+                href="#"
+                className="hover:text-[#FFD700] transition-transform transform hover:scale-110"
+              >
+                <Instagram size={24} />
               </a>
-              <a href="#" className="hover:text-[#23B3B6]">
-                <Linkedin />
+              <a
+                href="#"
+                className="hover:text-[#FFD700] transition-transform transform hover:scale-110"
+              >
+                <Linkedin size={24} />
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-700 text-center">
-          <p>&copy; 2024 Tech Web Shop. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-gray-400 text-center">
+          <p className="text-sm">
+            &copy; 2024 Qintronics. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
