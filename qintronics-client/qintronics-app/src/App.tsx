@@ -20,6 +20,7 @@ import ProductList from "./components/ProductList";
 import SalesPage from "./components/SalesPage";
 import { CardPaymentProvider } from "./context/card-payment.context";
 import products from "./data/products.json";
+import AboutUs from "./components/AboutUs";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -56,6 +57,7 @@ function App() {
             <Route path="/sales" element={<SalesPage />} />
             <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/category/gift-cards" element={<GiftCard />} />
+            <Route path="/about-us" element={<AboutUs />} />
           </Routes>
         </CardPaymentProvider>
       </div>

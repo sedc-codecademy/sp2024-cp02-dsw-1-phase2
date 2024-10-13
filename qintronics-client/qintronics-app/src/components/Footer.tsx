@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
@@ -16,36 +17,36 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-6">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/products"
+                <Link
+                  to="/products"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Products
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/about"
+                <Link
+                  to="/about-us"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -53,36 +54,36 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-6">Customer Service</h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="/faq"
+                <Link
+                  to="/faq"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/shipping"
+                <Link
+                  to="/shipping"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Shipping
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/returns"
+                <Link
+                  to="/returns"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Returns
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/privacy"
+                <Link
+                  to="/privacy"
                   className="hover:text-[#FFD700] transition-colors duration-300"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
