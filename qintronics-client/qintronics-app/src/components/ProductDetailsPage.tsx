@@ -3,8 +3,7 @@ import products from "../data/products.json";
 import { BaseProduct } from "../common/types/products-interface";
 import { useState, useRef, useEffect } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
 import Sidebar from "./Sidebar";
 
 const formatKey = (key: string) => {
@@ -37,7 +36,7 @@ const ProductDetailsPage = () => {
   // Scroll to top when the component mounts or when the product ID changes
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [id]); // Run whenever the product ID changes
+  }, [id]);
 
   if (!product) {
     return (
@@ -87,7 +86,7 @@ const ProductDetailsPage = () => {
     <div className="flex">
       <Sidebar />
       <div className="min-h-screen flex flex-1 justify-center items-center p-4 md:p-8">
-        <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[60vh] relative">
+        <div className="bg-white p-6 md:p-10 lg:p-16 rounded-lg shadow-lg max-w-7xl w-full h-auto min-h-[80vh] relative">
           {/* For larger screens, show the discount badge in the top-left corner */}
           {product.discount > 0 && (
             <div className="hidden md:block absolute top-2 left-2 bg-[#1BD8C4] text-white font-bold text-xs px-2 py-1 rounded-full">
@@ -137,7 +136,7 @@ const ProductDetailsPage = () => {
                     src={product.img || "/images/default-product.jpg"}
                     alt={product.name}
                     className="w-full h-auto object-contain"
-                    style={{ maxHeight: "80vh", maxWidth: "100%" }} // Limit the image size to fit within the screen
+                    style={{ maxHeight: "80vh", maxWidth: "100%" }}
                   />
                 </div>
               </div>
@@ -149,34 +148,26 @@ const ProductDetailsPage = () => {
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
                   {product.name}
                 </h2>
-                {/* Heart icon for mobile */}
-                <div className="block md:hidden">
-                  <FontAwesomeIcon
-                    icon={faHeart}
-                    className="text-xl sm:text-2xl text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 sm:p-2 bg-white shadow-lg cursor-pointer"
-                    title="Add to Favorites"
-                  />
-                </div>
-                {/* Heart icon for larger screens */}
-                <div className="hidden md:block">
-                  <FontAwesomeIcon
-                    icon={faHeart}
-                    className="text-2xl lg:text-3xl text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-2 bg-white shadow-lg cursor-pointer"
-                    title="Add to Favorites"
-                  />
-                </div>
+              </div>
+
+              {/* Favorites (Wishlist) and Compare Buttons */}
+              <div className="flex space-x-4 mb-4">
+                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
+                  <Heart size={20} className="mr-2" /> Wishlist
+                </button>
+                <button className="flex items-center px-3 py-2 text-sm text-[#1A3F6B] border border-[#1A3F6B] rounded-lg hover:bg-[#1A3F6B] hover:text-white transition-all duration-300">
+                  <ArrowRightLeft size={20} className="mr-2" /> Compare
+                </button>
               </div>
 
               {/* Product Price and Discount */}
               <div className="mb-4">
                 {product.discount > 0 ? (
                   <>
-                    {/* Original Price */}
                     <p className="line-through text-sm text-[#1A3F6B]">
                       ${product.price.toFixed(2)}
                     </p>
 
-                    {/* Discounted Price and Badge */}
                     <div className="flex items-center justify-between">
                       <span className="text-[#1BD8C4] text-2xl lg:text-3xl font-bold">
                         $
@@ -185,7 +176,6 @@ const ProductDetailsPage = () => {
                           (product.price * product.discount) / 100
                         ).toFixed(2)}
                       </span>
-                      {/* Show the discount badge next to the discounted price only on mobile */}
                       <span className="inline-block bg-[#1BD8C4] text-white font-bold text-xs px-2 py-1 rounded-full md:hidden">
                         {product.discount}% OFF
                       </span>
@@ -219,7 +209,7 @@ const ProductDetailsPage = () => {
                 <div className="flex items-center group rounded-lg p-1">
                   <button
                     className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
-                    style={{ width: "40px", height: "40px" }} // Square buttons with shadow
+                    style={{ width: "40px", height: "40px" }}
                     onClick={decrementQuantity}
                   >
                     <FaMinus />
@@ -231,26 +221,23 @@ const ProductDetailsPage = () => {
                     onChange={handleQuantityChange}
                     className="text-center w-12 sm:w-16 p-2"
                     style={{
-                      height: "40px", // Match the height
-                      border: "1px solid #1A3F6B", // Add a solid border with color
-                      borderRadius: "5px", // Optional: add rounded corners
-                      outline: "none", // Remove default input outline
-                      appearance: "none", // Remove spinners in most browsers
-                      MozAppearance: "textfield", // Remove spinners in Firefox
-                      WebkitAppearance: "none", // Remove spinners in Chrome, Safari, Edge
+                      height: "40px",
+                      border: "1px solid #1A3F6B",
+                      borderRadius: "5px",
+                      outline: "none",
+                      appearance: "none",
+                      MozAppearance: "textfield",
+                      WebkitAppearance: "none",
                       margin: "0 10px",
                     }}
                   />
 
                   <style>{`
-                    /* Hide spinners for Chrome, Safari, Edge, and Opera */
                     input[type="number"]::-webkit-outer-spin-button,
                     input[type="number"]::-webkit-inner-spin-button {
                       -webkit-appearance: none;
                       margin: 0;
                     }
-
-                    /* Hide spinners for Firefox */
                     input[type="number"] {
                       -moz-appearance: textfield;
                     }
@@ -258,7 +245,7 @@ const ProductDetailsPage = () => {
 
                   <button
                     className="px-3 py-2 bg-white border border-[#1A3F6B] text-[#1A3F6B] rounded-lg shadow-lg transition-all duration-300 hover:bg-[#1A3F6B] hover:text-white"
-                    style={{ width: "40px", height: "40px" }} // Square buttons with shadow
+                    style={{ width: "40px", height: "40px" }}
                     onClick={incrementQuantity}
                   >
                     <FaPlus />
@@ -275,7 +262,7 @@ const ProductDetailsPage = () => {
                 <button
                   className="font-semibold text-lg text-[#1A3F6B] cursor-pointer w-auto text-left focus:outline-none transition-all duration-300"
                   onClick={toggleDetails}
-                  style={{ display: "block", width: "fit-content" }} // Ensure button starts from left and stays inline
+                  style={{ display: "block", width: "fit-content" }}
                 >
                   Specifications
                   <span

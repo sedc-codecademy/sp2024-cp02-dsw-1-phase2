@@ -1,8 +1,7 @@
 import { BaseProduct } from "../common/types/products-interface";
 import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-product.helper";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { FaShoppingCart } from "react-icons/fa";
+import { ArrowRightLeft, Heart } from "lucide-react"; // Importing both icons from lucide-react
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
@@ -20,7 +19,6 @@ const ProductList = ({
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Trigger the animation immediately when the component is mounted
     setIsLoaded(true);
   }, []);
 
@@ -37,7 +35,7 @@ const ProductList = ({
             {title}
           </h1>
           <div
-            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full justify-center items-center ${
+            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full justify-center items-center ${
               isLoaded ? "flip-in" : ""
             }`}
           >
@@ -55,7 +53,7 @@ const ProductList = ({
 
               return (
                 <div
-                  className={`relative mx-auto w-64 h-auto min-h-[28rem] rounded-lg text-center cursor-pointer transform transition-all ease-in-out duration-300 hover:scale-105 shadow-2xl hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between`}
+                  className={`relative mx-auto w-64 h-96 min-h-[28rem] rounded-lg text-center cursor-pointer transform transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group`}
                   key={product.id}
                   onClick={() => handleProductClick(product.id)}
                   style={{
@@ -69,14 +67,19 @@ const ProductList = ({
                     </div>
                   )}
 
-                  {/* Heart icon on the right */}
-                  <div className="absolute top-2 right-2">
-                    <FontAwesomeIcon
-                      icon={faHeart}
-                      className="text-[#1A3F6B] text-lg border border-[#1A3F6B] rounded-full p-1 bg-white"
+                  {/* Heart icon and ArrowRightLeft icon - Hidden until hover */}
+                  <div className="absolute top-2 right-2 flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Heart
+                      size={24} // Ensuring the Heart and ArrowRightLeft icons have the same size
+                      className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
+                    />
+                    <ArrowRightLeft
+                      size={24}
+                      className="text-[#1A3F6B] border border-[#1A3F6B] rounded-full p-1 bg-white"
                     />
                   </div>
 
+                  {/* Product image centered */}
                   <div className="p-4 sm:p-6 rounded-lg text-[#1A3F6B] h-full flex flex-col justify-between">
                     <div className="w-full h-32 sm:h-40 flex justify-center items-center mb-2 sm:mb-4">
                       <img
@@ -90,16 +93,23 @@ const ProductList = ({
                       {product.name}
                     </h4>
                     <p className="text-md mt-1">Brand: {product.brand}</p>
-                    <p
-                      className={`text-lg sm:text-xl font-bold mt-1 ${
-                        product.discount > 0 ? "text-[#1BD8C4]" : ""
-                      }`}
-                    >
-                      ${validDiscountedPrice}
-                    </p>
-                    {product.discount > 0 && (
-                      <p className="text-sm mt-1 line-through">${validPrice}</p>
-                    )}
+
+                    {/* Pricing Section */}
+                    <div className="flex flex-col items-center">
+                      <p
+                        className={`text-lg sm:text-xl font-bold mt-1 ${
+                          product.discount > 0 ? "text-[#1BD8C4]" : ""
+                        }`}
+                      >
+                        ${validDiscountedPrice}
+                      </p>
+                      {product.discount > 0 && (
+                        <p className="text-sm mt-1 line-through text-gray-500">
+                          ${validPrice}
+                        </p>
+                      )}
+                    </div>
+
                     <p className="text-md mt-1">
                       Availability: {product.availability} units
                     </p>
