@@ -6,7 +6,7 @@ import {
   FaShieldAlt,
   FaUserCheck,
   FaBatteryFull,
-} from "react-icons/fa"; // Importing new icons
+} from "react-icons/fa";
 
 const AboutUs = () => {
   return (
