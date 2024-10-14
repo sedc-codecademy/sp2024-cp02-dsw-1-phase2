@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -34,6 +35,7 @@ import { OrderUpdateDto } from './dtos/order-update.dto';
 import { GetAllOrdersDto } from './dtos/orders-get-all.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrdersService } from './orders.service';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @ApiTags('Orders')
@@ -46,7 +48,7 @@ export class OrdersController {
   @Post('/get')
   @ApiOperation({ summary: 'Retrieve all orders' })
   @ApiCreatedResponse({
-    type: [OrderReturnDto],
+    type: [QueryOrderReturnDto],
     description: 'Orders successfully retrieved',
   })
   @ApiBody({
@@ -58,7 +60,7 @@ export class OrdersController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  getAll(@Body() body: GetAllOrdersDto): Promise<PageDto<OrderReturnDto>> {
+  getAll(@Body() body: GetAllOrdersDto): Promise<PageDto<QueryOrderReturnDto>> {
     const { paginationQueries, queryParams } = body;
     return this.ordersService.getAll(paginationQueries, queryParams);
   }
