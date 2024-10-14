@@ -27,6 +27,7 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 
 @Injectable()
 export class OrdersService {
@@ -136,7 +137,7 @@ export class OrdersService {
       orderNumber,
       sortDelDate,
     }: OrderQueryDto,
-  ): Promise<PageDto<OrderReturnDto>> {
+  ): Promise<PageDto<QueryOrderReturnDto>> {
     let whereQuery = {} satisfies FindOptionsWhere<Order>;
     let orderQuery = {} satisfies FindOptionsOrder<Order>;
 
@@ -179,17 +180,25 @@ export class OrdersService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
     const transformedOrders = entities.map((order) => {
-      const dto = plainToInstance(OrderReturnDto, order, {
+      const dto = plainToInstance(QueryOrderReturnDto, order, {
         excludeExtraneousValues: true,
       });
 
       dto.productsAndQuantity = order.orderProduct.map((op) => ({
-        product: op.product,
+        product: {
+          id: op.product.id,
+          name: op.product.name,
+          brand: op.product.brand,
+          img: op.product.img,
+        },
         quantity: op.quantity,
+        priceAtOrderTime: op.priceAtOrderTime,
       }));
+
       return dto;
     });
-    return new PageDto(transformedOrders, pageMetaDto);
+    const answer = new PageDto(transformedOrders, pageMetaDto);
+    return answer;
   }
 
   // * GET ORDER BY ID
@@ -199,6 +208,7 @@ export class OrdersService {
         orderProduct: {
           product: true,
         },
+        user: true,
       },
       where: { id: orderId },
     });
@@ -268,7 +278,17 @@ export class OrdersService {
       body.productsAndQuantity,
     );
 
-    return plainToInstance(OrderReturnDto, createdOrder, {
+    const completeOrder = await this.ordersRepository.findOne({
+      where: { id: createdOrder.id },
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+        user: true,
+      },
+    });
+
+    return plainToInstance(OrderReturnDto, completeOrder, {
       excludeExtraneousValues: true,
     });
   }
@@ -300,7 +320,6 @@ export class OrdersService {
       lastUpdatedBy: user?.email,
     });
     const wholeUser = await this.findUserById(user?.userId);
-    console.log(wholeUser);
     await this.emailService.sendOrderCancelationEmail(
       wholeUser.email,
       wholeUser.userInfo?.firstName,
