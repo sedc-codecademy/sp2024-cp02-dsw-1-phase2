@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
+  const location = useLocation();
+
+  // Automatically scroll to the top whenever the route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
   return (
     <footer className="bg-gradient-to-b from-[#1BD8C4] to-[#1A3F6B] text-white py-10">
       <div className="container mx-auto px-6">
