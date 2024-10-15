@@ -39,6 +39,7 @@ export class CategoriesController {
 
   // ========== GET ALL CATEGORIES ==========
   @Get('/')
+  @PublicRoute()
   @ApiOperation({ summary: 'Get Categories' })
   @ApiOkResponse({
     description: 'Retrieved all categories.',
