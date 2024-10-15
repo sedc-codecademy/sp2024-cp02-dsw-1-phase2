@@ -7,6 +7,7 @@ import { ProductResponseDto } from './dtos/product-response.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
 import { ProductQueryDto } from './dtos/product-query.dto';
 import { Category } from 'src/categories/category.entity';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -15,6 +16,8 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async getProducts({
@@ -100,6 +103,43 @@ export class ProductsService {
 
     const updatedProduct = this.productRepository.merge(product, body);
     return this.productRepository.save(updatedProduct);
+  }
+
+  async favoriteProduct(id: string, userId: string): Promise<void> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['favoritedBy'],
+    });
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!product || !user)
+      throw new NotFoundException('Product or user not found!');
+
+    const isFavorited = product.favoritedBy.some((user) => user.id === userId);
+
+    if (isFavorited) {
+      product.favoritedBy = product.favoritedBy.filter(
+        (product) => product.id !== userId,
+      );
+    } else {
+      product.favoritedBy.push(user);
+    }
+
+    await this.productRepository.save(product);
+  }
+
+  async getFavoriteProducts(userId: string): Promise<Product[]> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['favoriteProducts'],
+    });
+
+    if (!user) throw new NotFoundException('User not found!');
+
+    return user.favoriteProducts;
   }
 
   async deleteProduct(id: string): Promise<void> {

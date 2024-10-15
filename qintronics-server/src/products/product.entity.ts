@@ -2,11 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'src/categories/category.entity';
 import { Order } from 'src/orders/order.entity';
 import { OrderProduct } from 'src/orders/orders-products.entity';
+import { User } from 'src/users/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -109,9 +111,6 @@ export class Product {
   @JoinColumn({
     name: 'category_id',
   })
-  @ApiProperty({
-    type: Category,
-  })
   category: Category;
 
   @Column({
@@ -124,12 +123,15 @@ export class Product {
   })
   categoryId: string;
 
-  // @ManyToMany(() => Order, (order) => order.products)
-  // @ApiProperty({ type: () => Order, isArray: true })
-  // orders: Order[];
+  @ManyToMany(() => User, (user) => user.favoriteProducts)
+  @JoinTable({
+    name: 'favorite_products',
+    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  favoritedBy: User[];
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
-  @ApiProperty({ type: () => OrderProduct, isArray: true })
   orderProduct: OrderProduct[];
 
   @CreateDateColumn()

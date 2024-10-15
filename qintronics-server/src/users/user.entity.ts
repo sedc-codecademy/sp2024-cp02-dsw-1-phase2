@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Role } from 'src/common/enums/roles.enum';
 import { Order } from 'src/orders/order.entity';
+import { Product } from 'src/products/product.entity';
 import { UserInfo } from 'src/user-info/user-info.entity';
 import {
   Column,
@@ -8,6 +9,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -87,6 +89,9 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @ManyToMany(() => Product, (product) => product.favoritedBy)
+  favoriteProducts: Product[];
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({
