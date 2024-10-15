@@ -21,6 +21,8 @@ import SalesPage from "./components/SalesPage";
 import { CardPaymentProvider } from "./context/card-payment.context";
 import products from "./data/products.json";
 import AboutUs from "./components/AboutUs";
+import FAQ from "./components/FAQ";
+import Shipping from "./components/Shipping";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -58,6 +60,8 @@ function App() {
             <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/category/gift-cards" element={<GiftCard />} />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/shipping" element={<Shipping />} />
           </Routes>
         </CardPaymentProvider>
       </div>
