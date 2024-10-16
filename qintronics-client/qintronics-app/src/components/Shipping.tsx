@@ -23,19 +23,20 @@ const Shipping: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Fast Delivery Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="../../public/images/shipping/fast-delivery.webp"
-              alt="Fast Delivery"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#1BD8C4] to-[#1A3F6B] p-4 rounded-full">
                 <FaTruck className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/fast-delivery.webp"
+              alt="Fast Delivery"
+              className="w-full h-60 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Fast Delivery
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
@@ -46,19 +47,20 @@ const Shipping: React.FC = () => {
           </div>
 
           {/* Global Shipping Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Global Shipping"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
-              <div className="bg-gradient-to-br from-[#FF8C00] to-[#FF8000] p-4 rounded-full">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-br from-[#3498db] to-[#2980b9]  p-4 rounded-full">
                 <FaGlobe className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/global-shipping.jpg"
+              alt="Global Shipping"
+              className="w-full h-460 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Global Shipping
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
@@ -68,19 +70,20 @@ const Shipping: React.FC = () => {
           </div>
 
           {/* Estimated Delivery Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Estimated Delivery"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
-              <div className="bg-gradient-to-br from-[#3498db] to-[#2980b9] p-4 rounded-full">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="   bg-gradient-to-br from-[#FFA500] to-[#FFD700] p-4 rounded-full">
                 <FaClock className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/estimated-delivery.webp"
+              alt="Estimated Delivery"
+              className="w-full h-60 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Estimated Delivery Times
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
@@ -90,19 +93,20 @@ const Shipping: React.FC = () => {
           </div>
 
           {/* Shipping Costs Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Shipping Costs"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#2ecc71] to-[#16a085] p-4 rounded-full">
                 <FaDollarSign className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/shipping-rates.jpeg"
+              alt="Shipping Costs"
+              className="w-full h-60 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Affordable Shipping Rates
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
@@ -112,19 +116,20 @@ const Shipping: React.FC = () => {
           </div>
 
           {/* Shipping Insurance Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Shipping Insurance"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
-              <div className="bg-gradient-to-br from-[#e67e22] to-[#d35400] p-4 rounded-full">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-br from-[#A3D8F4] to-[#73BFE6] p-4 rounded-full">
                 <FaShieldAlt className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/shipping-insurance.png"
+              alt="Shipping Insurance"
+              className="w-full h-60 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Shipping Insurance
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
@@ -135,19 +140,20 @@ const Shipping: React.FC = () => {
           </div>
 
           {/* Shipping Transparency Section */}
-          <div className="relative bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
-            {/* Image */}
-            <img
-              src="https://via.placeholder.com/300"
-              alt="Shipping Transparency"
-              className="w-full h-40 object-cover rounded-t-lg mb-6"
-            />
-            <div className="absolute top-[-1.5rem] left-1/2 transform -translate-x-1/2">
+          <div className="bg-white p-8 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 group">
+            {/* Icon */}
+            <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-[#9b59b6] to-[#8e44ad] p-4 rounded-full">
                 <FaInfoCircle className="text-4xl text-white" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-center mt-10 mb-4">
+            {/* Image */}
+            <img
+              src="../../public/images/shipping/track-order.png"
+              alt="Shipping Transparency"
+              className="w-full h-60 object-cover rounded-t-lg mb-6"
+            />
+            <h3 className="text-2xl font-bold text-center mb-4">
               Shipping Transparency
             </h3>
             <p className="text-gray-700 text-center leading-relaxed">
