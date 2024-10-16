@@ -1,23 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { Product } from 'src/products/product.entity';
 import { BasicUserResponse } from 'src/users/dtos/basic-user-response.dto';
 
 class BasicProductDto {
   @Expose()
-  @ApiProperty({ example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc' })
+  @ApiProperty({
+    type: 'string',
+    description: 'Product unique ID in UUID format',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+  })
   id: string;
 
   @Expose()
-  @ApiProperty({ example: 'Lenovo ThinkPad X1 Carbon Gen 9' })
+  @ApiProperty({
+    type: 'string',
+    description: 'Product name',
+    example: 'Lenovo ThinkPad X1 Carbon Gen 9',
+  })
   name: string;
 
   @Expose()
-  @ApiProperty({ example: 'Lenovo' })
+  @ApiProperty({
+    type: 'string',
+    description: 'Product brand',
+    example: 'Lenovo',
+  })
   brand: string;
 
   @Expose()
-  @ApiProperty({ example: './images/laptops/lenovo-1.jpg' })
+  @ApiProperty({
+    type: 'string',
+    description: 'Product category',
+    example: './images/laptops/lenovo-1.jpg',
+  })
   img: string;
 }
 

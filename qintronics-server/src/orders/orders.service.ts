@@ -22,12 +22,13 @@ import {
   Repository,
 } from 'typeorm';
 import { OrderCreateDto, ProductsAndQuantity } from './dtos/order-create.dto';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 import { OrderQueryDto } from './dtos/order-query.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
-import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
+import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 
 @Injectable()
 export class OrdersService {
@@ -89,6 +90,19 @@ export class OrdersService {
           ?.quantity || 1;
       return acc + product.price * productQuantity;
     }, 0);
+  }
+
+  // * GET TOTALS FOR ADMIN DASHBOARD
+  async getMonthlyTotalsHistory(): Promise<MonthlyTotalHistoryDto[]> {
+    return await this.ordersRepository
+      .createQueryBuilder('order')
+      .select("TO_CHAR(order.created_at, 'YYYY-MM')", 'month')
+      .addSelect('SUM(order.total)', 'total_sum')
+      .where("order.created_at >= DATE_TRUNC('year', now())")
+      .andWhere('order.isCanceled = false')
+      .groupBy("TO_CHAR(order.created_at, 'YYYY-MM')")
+      .orderBy('month', 'ASC')
+      .getRawMany();
   }
 
   // * ADD PRODUCT TO ORDER

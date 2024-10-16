@@ -7,7 +7,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -28,20 +27,38 @@ import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PageDto } from 'src/common/ordersPagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { Order } from 'src/orders/order.entity';
 import { OrderCreateDto } from './dtos/order-create.dto';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
+import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { GetAllOrdersDto } from './dtos/orders-get-all.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrdersService } from './orders.service';
-import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
+
+  //* GET TOTALS FOR ADMIN DASHBOARD
+  @Roles(Role.Admin)
+  @Get('/monthly-totals')
+  @ApiOperation({ summary: 'Get monthly totals for admin dashboard' })
+  @ApiOkResponse({
+    type: [MonthlyTotalHistoryDto],
+    description: 'Monthly totals successfully retrieved',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'This is admin only page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  async getMonthlyHistory(): Promise<MonthlyTotalHistoryDto[]> {
+    return await this.ordersService.getMonthlyTotalsHistory();
+  }
 
   //* GET ALL ORDERS W/ QUERIES AND PAGINATION
   @Roles(Role.Admin, Role.DeliveryPerson, Role.Customer)
