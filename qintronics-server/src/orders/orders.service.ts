@@ -27,6 +27,7 @@ import { OrderReturnDto } from './dtos/order-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
 import { OrderProduct } from './orders-products.entity';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 
 @Injectable()
 export class OrdersService {
@@ -71,7 +72,7 @@ export class OrdersService {
     }
     await this.emailService.sendOrderConfirmationEmail(
       user.email,
-      user.userInfo?.name,
+      user.userInfo?.firstName,
       orderDetails,
       productDetails,
     );
@@ -136,7 +137,7 @@ export class OrdersService {
       orderNumber,
       sortDelDate,
     }: OrderQueryDto,
-  ): Promise<PageDto<OrderReturnDto>> {
+  ): Promise<PageDto<QueryOrderReturnDto>> {
     let whereQuery = {} satisfies FindOptionsWhere<Order>;
     let orderQuery = {} satisfies FindOptionsOrder<Order>;
 
@@ -179,36 +180,48 @@ export class OrdersService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
     const transformedOrders = entities.map((order) => {
-      const dto = plainToInstance(OrderReturnDto, order, {
+      const dto = plainToInstance(QueryOrderReturnDto, order, {
         excludeExtraneousValues: true,
       });
 
       dto.productsAndQuantity = order.orderProduct.map((op) => ({
-        product: op.product,
+        product: {
+          id: op.product.id,
+          name: op.product.name,
+          brand: op.product.brand,
+          img: op.product.img,
+        },
         quantity: op.quantity,
+        priceAtOrderTime: op.priceAtOrderTime,
       }));
+
       return dto;
     });
-    return new PageDto(transformedOrders, pageMetaDto);
+    const answer = new PageDto(transformedOrders, pageMetaDto);
+    return answer;
   }
 
   // * GET ORDER BY ID
-  async getOrderById(orderId: string): Promise<Order> {
+  async getOrderById(orderId: string): Promise<OrderReturnDto> {
     const orderByID = await this.ordersRepository.findOne({
       relations: {
         orderProduct: {
           product: true,
         },
+        user: true,
       },
       where: { id: orderId },
     });
 
     if (!orderByID) throw new NotFoundException('Order not found');
-    return orderByID;
+
+    return plainToInstance(OrderReturnDto, orderByID, {
+      excludeExtraneousValues: true,
+    });
   }
 
   //* GET ORDERS BY USER ID
-  async getOrdersByUserId(userId: string): Promise<Order[]> {
+  async getOrdersByUserId(userId: string): Promise<OrderReturnDto[]> {
     const ordersOfUser = await this.ordersRepository.find({
       relations: {
         orderProduct: {
@@ -221,14 +234,16 @@ export class OrdersService {
     });
     if (!ordersOfUser || ordersOfUser.length < 1)
       throw new NotFoundException('No orders by this user');
-    return ordersOfUser;
+    return plainToInstance(OrderReturnDto, ordersOfUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
   //* CREATE ORDER
   async createOrder(
     body: OrderCreateDto,
     currentUser: ICurrentUser,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     const products = await this.productsRepository.findBy({
       id: In(body.productsAndQuantity.map((product) => product.productId)),
     });
@@ -263,14 +278,26 @@ export class OrdersService {
       body.productsAndQuantity,
     );
 
-    return createdOrder;
+    const completeOrder = await this.ordersRepository.findOne({
+      where: { id: createdOrder.id },
+      relations: {
+        orderProduct: {
+          product: true,
+        },
+        user: true,
+      },
+    });
+
+    return plainToInstance(OrderReturnDto, completeOrder, {
+      excludeExtraneousValues: true,
+    });
   }
 
   // * CANCEL ORDER (USER)
   async cancelOrder(
     orderId: string,
     user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     const orderToBeCanceled = await this.ordersRepository.findOne({
       where: { id: orderId },
       relations: {
@@ -293,14 +320,16 @@ export class OrdersService {
       lastUpdatedBy: user?.email,
     });
     const wholeUser = await this.findUserById(user?.userId);
-    console.log(wholeUser);
     await this.emailService.sendOrderCancelationEmail(
       wholeUser.email,
-      wholeUser.userInfo?.name,
+      wholeUser.userInfo?.firstName,
       updatedOrder,
     );
+    const canceledOrder = await this.ordersRepository.save(updatedOrder);
 
-    return this.ordersRepository.save(updatedOrder);
+    return plainToInstance(OrderReturnDto, canceledOrder, {
+      excludeExtraneousValues: true,
+    });
   }
 
   //* CHANGE ORDER STATUS (DELIVERY PERSON)
@@ -308,7 +337,7 @@ export class OrdersService {
     status: StatusUpdateDto,
     orderId: string,
     user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     const orderToBeUpdated = await this.ordersRepository.findOne({
       where: { id: orderId },
       relations: {
@@ -324,7 +353,14 @@ export class OrdersService {
 
     const updatedOrder = this.ordersRepository.merge(orderToBeUpdated, status);
     updatedOrder.lastUpdatedBy = user?.email;
-    return this.ordersRepository.save(updatedOrder);
+
+    return plainToInstance(
+      OrderReturnDto,
+      this.ordersRepository.save(updatedOrder),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   //* UPDATE ORDER (ADMIN)
@@ -332,7 +368,7 @@ export class OrdersService {
     updateBody: OrderUpdateDto,
     orderId: string,
     user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     const order = await this.ordersRepository.findOne({
       where: { id: orderId },
       relations: {
@@ -353,7 +389,13 @@ export class OrdersService {
 
     const updatedOrder = this.ordersRepository.merge(order, updatedData);
     updatedOrder.lastUpdatedBy = user?.email;
-    return this.ordersRepository.save(updatedOrder);
+    return plainToInstance(
+      OrderReturnDto,
+      this.ordersRepository.save(updatedOrder),
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   // * DELETE ORDER

@@ -9,8 +9,19 @@ export class CreateUserInfoDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @ApiProperty({
     type: String,
-    description: `User's name`,
+    description: `User's first name`,
     example: 'Marija',
   })
-  name: string;
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(2)
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @ApiProperty({
+    type: String,
+    description: `User's last name`,
+    example: 'Menchevska',
+  })
+  lastName: string;
 }

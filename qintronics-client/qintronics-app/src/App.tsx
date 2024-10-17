@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
 import CategoryPage from "./components/CategoryPage";
@@ -17,8 +18,9 @@ import OrderPage from "./components/OrderPage";
 import ProductDetailsPage from "./components/ProductDetailsPage";
 import ProductList from "./components/ProductList";
 import SalesPage from "./components/SalesPage";
-import { CardPaymentProvider } from "./context/CardPaymentContext";
+import { CardPaymentProvider } from "./context/card-payment.context";
 import products from "./data/products.json";
+import AboutUs from "./components/AboutUs";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -34,46 +36,35 @@ function App() {
   return (
     <div className="App flex flex-col">
       <Header onLoginClick={toggleLoginPopup} />
-      
+
       <div className="content grow">
         <CardPaymentProvider>
           <Routes>
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<OrderPage />} />
-            <Route path="/payment" element={<CardPaymentForm />} />
-            <Route path="/contact" element={<ContactForm />} />
             <Route path="/" element={<MainComponent />} />
+            <Route path="/cart" element={<CartPage />} />
+            {/* <Route element={<PrivateRoute />}> */}
+              <Route path="/checkout" element={<OrderPage />} />
+              <Route path="/payment" element={<CardPaymentForm />} />
+            {/* </Route> */}
+            <Route path="/contact" element={<ContactForm />} />
             <Route path="/compare" element={<CompareProducts />} />
             <Route path="/dashboard" element={<Dashboard />} />{" "}
-             {/* Default product list */}
-          <Route
-            path="/products"
-            element={<ProductList productList={convertedProducts} />}
-          />
-
-          {/* Product Details */}
-          <Route path="/products/:id" element={<ProductDetailsPage />} />
-
-          {/* Sales page */}
-          <Route path="/sales" element={<SalesPage />} />
-
-          {/* Category specific pages */}
-              <Route path="/category/:category" element={<CategoryPage />} />
-              
-             
- {/* Gift Card Page */}
- <Route path="/category/gift-cards" element={<GiftCard />} />
-              
-
-         
+            <Route
+              path="/products"
+              element={<ProductList productList={convertedProducts} />}
+            />
+            <Route path="/products/:id" element={<ProductDetailsPage />} />
+            <Route path="/sales" element={<SalesPage />} />
+            <Route path="/category/:category" element={<CategoryPage />} />
+            <Route path="/category/gift-cards" element={<GiftCard />} />
+            <Route path="/about-us" element={<AboutUs />} />
           </Routes>
         </CardPaymentProvider>
-        </div>
-        
+      </div>
+
       <LoginPopup isOpen={isLoginPopupOpen} onClose={toggleLoginPopup} />
       <Footer />
 
-      {/* Chatbot bubble */}
       <div className="fixed bottom-4 right-4">
         <motion.button
           onClick={toggleChat} // Opens the chat on button click
@@ -85,7 +76,6 @@ function App() {
         </motion.button>
       </div>
 
-      {/* Chatbot window */}
       {isChatOpen && (
         <motion.div
           initial={{ opacity: 0, scale: 0 }}

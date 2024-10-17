@@ -1,15 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { Product } from 'src/products/product.entity';
-import { NoSensitiveUserResponse } from 'src/users/dtos/no-sensitive-user-response.dto';
+import { BasicUserResponse } from 'src/users/dtos/basic-user-response.dto';
 
-class ProductsAndQuantityReturnDto {
+class BasicProductDto {
   @Expose()
+  @ApiProperty({ example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc' })
+  id: string;
+
+  @Expose()
+  @ApiProperty({ example: 'Lenovo ThinkPad X1 Carbon Gen 9' })
+  name: string;
+
+  @Expose()
+  @ApiProperty({ example: 'Lenovo' })
+  brand: string;
+
+  @Expose()
+  @ApiProperty({ example: './images/laptops/lenovo-1.jpg' })
+  img: string;
+}
+
+export class ProductsAndQuantityReturnDto {
+  @Expose()
+  @Type(() => BasicProductDto)
   @ApiProperty({
-    type: Product,
+    type: BasicProductDto,
     description: 'The product details',
   })
-  product: Product;
+  product: BasicProductDto;
 
   @Expose()
   @ApiProperty({
@@ -18,6 +37,14 @@ class ProductsAndQuantityReturnDto {
     example: 2,
   })
   quantity: number;
+
+  @Expose()
+  @ApiProperty({
+    type: 'number',
+    description: 'The price of the product at the time of the order',
+    example: 2998,
+  })
+  priceAtOrderTime: number;
 }
 
 export class OrderReturnDto {
@@ -106,12 +133,12 @@ export class OrderReturnDto {
   total: number;
 
   @Expose()
-  @Type(() => NoSensitiveUserResponse)
+  @Type(() => BasicUserResponse)
   @ApiProperty({
-    type: NoSensitiveUserResponse,
+    type: BasicUserResponse,
     description: 'User who made the order',
   })
-  user: NoSensitiveUserResponse;
+  user: BasicUserResponse;
 
   @Expose()
   @Type(() => ProductsAndQuantityReturnDto)
@@ -119,7 +146,7 @@ export class OrderReturnDto {
     type: [ProductsAndQuantityReturnDto],
     description: 'List of products with their quantities',
   })
-  productsAndQuantity: ProductsAndQuantityReturnDto[];
+  orderProduct: ProductsAndQuantityReturnDto[];
 
   @Exclude()
   createdAt: Date;
