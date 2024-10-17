@@ -251,7 +251,7 @@ const ProductDetailsPage = () => {
                     <FaPlus />
                   </button>
                 </div>
-                <button className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center">
+                <button className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center uppercase">
                   <FaShoppingCart className="mr-2" />
                   Add to Cart
                 </button>

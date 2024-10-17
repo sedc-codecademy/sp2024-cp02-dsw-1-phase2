@@ -115,7 +115,7 @@ const ProductList = ({
                     </p>
 
                     {/* Add to Cart Button */}
-                    <button className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center">
+                    <button className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase">
                       <FaShoppingCart className="mr-2" />
                       Add to Cart
                     </button>
