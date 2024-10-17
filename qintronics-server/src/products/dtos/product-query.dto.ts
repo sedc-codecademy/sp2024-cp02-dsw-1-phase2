@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
@@ -16,10 +17,12 @@ export class ProductQueryDto {
 
   @IsInt()
   @IsOptional()
+  @Type(() => Number)
   page?: number = 1;
 
   @IsInt()
   @IsOptional()
+  @Type(() => Number)
   pageSize?: number = 10;
 
   @IsString()
