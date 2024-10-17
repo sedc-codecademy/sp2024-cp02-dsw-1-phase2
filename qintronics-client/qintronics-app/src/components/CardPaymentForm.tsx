@@ -158,7 +158,7 @@ const CardPaymentForm: React.FC = () => {
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto">
       <h2 className="text-3xl font-bold text-primary mb-6 text-center" >Card Payment</h2>
 
-      <h3 className="text-lg font-medium mb-4">Your Credit or Debit Cards</h3>
+      <h3 className="text-lg font-medium mb-4">Select Your Credit or Debit Cards</h3>
       <ul className="space-y-4">
         {savedCards.map((card) => (
           <li
