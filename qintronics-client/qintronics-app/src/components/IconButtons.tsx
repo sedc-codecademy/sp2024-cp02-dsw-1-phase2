@@ -4,9 +4,16 @@ import { Link } from "react-router-dom";
 interface IconButtonsProps {
   onLoginClick: () => void;
   toggleMenu: () => void;
+  loggedIn: boolean;
+  userName: string | null;
 }
 
-const IconButtons = ({ onLoginClick, toggleMenu }: IconButtonsProps) => {
+const IconButtons = ({
+  onLoginClick,
+  toggleMenu,
+  loggedIn,
+  userName,
+}: IconButtonsProps) => {
   return (
     <div className="flex items-center space-x-4 flex-shrink-0 z-20">
       <Link to="/cart">
@@ -27,9 +34,16 @@ const IconButtons = ({ onLoginClick, toggleMenu }: IconButtonsProps) => {
       </Link>
       <button
         onClick={onLoginClick}
-        className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800"
+        className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800 flex items-center"
       >
-        <User size={20} />
+        {loggedIn ? (
+          <span className="text-sm font-medium">{userName}</span>
+        ) : (
+          <>
+            <User size={20} />
+            <span className="ml-2 text-sm">Login</span>
+          </>
+        )}
       </button>
       <button
         onClick={toggleMenu}
