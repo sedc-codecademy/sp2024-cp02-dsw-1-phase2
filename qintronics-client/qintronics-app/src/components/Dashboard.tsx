@@ -1,3 +1,4 @@
+// Dashboard.tsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Product } from "../common/types/Product-interface";
@@ -11,34 +12,111 @@ import RecentActivity from "./RecentActivity";
 import InventoryStatus from "./InventoryStatus";
 import ProductSearch from "./ProductSearch";
 import UserManagement from "./UserManagement";
+import Pagination from "./Pagination";
+import axiosInstance from "../common/utils/axios-instance.util";
+
+interface ProductsResponse {
+  products: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
 
 const AdminDashboard = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeSection, setActiveSection] = useState<string>("dashboard");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [totalProducts, setTotalProducts] = useState<number>(0);
+  const [sort, setSort] = useState<string>("ASC");
+  const [sortBy, setSortBy] = useState<string>("name");
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [brand, setBrand] = useState<string>("");
 
   useEffect(() => {
-    fetch("/products.json")
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error("Error fetching products:", error));
-  }, []);
+    fetchProducts();
+  }, [page, pageSize, sort, sortBy, categoryName, brand, searchTerm]);
+
+  const fetchProducts = async () => {
+    try {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+        sort,
+        sortBy,
+        ...(categoryName && { categoryName }),
+        ...(brand && { brand }),
+        ...(searchTerm && { name: searchTerm }),
+      });
+
+      // Ensure page and pageSize are numbers
+      queryParams.set("page", page.toString());
+      queryParams.set("pageSize", pageSize.toString());
+
+      const response = await fetch(
+        `http://localhost:3000/api/products?${queryParams}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
+      const data: ProductsResponse = await response.json();
+      setProducts(data.products);
+      setTotalProducts(data.total);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   const handleCreateProduct = () => {
     console.log("Create product");
   };
 
   const handleRemoveProduct = (id: string) => {
-    setProducts(products.filter((product) => product.id !== id));
+    axiosInstance
+      .delete(`/products/${id}`)
+      .then(() => {
+        setProducts(products.filter((product) => product.id !== id));
+      })
+      .catch((error) => {
+        console.error("Error removing product:", error);
+      });
   };
 
   const handleUpdateProduct = (id: string) => {
     console.log("Update product", id);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1); // Reset to first page when changing page size
+  };
+
+  const handleSortChange = (newSort: string) => {
+    setSort(newSort);
+    setPage(1);
+  };
+
+  const handleSortByChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    setPage(1);
+  };
+
+  const handleCategoryChange = (newCategory: string) => {
+    setCategoryName(newCategory);
+    setPage(1);
+  };
+
+  const handleBrandChange = (newBrand: string) => {
+    setBrand(newBrand);
+    setPage(1);
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -73,12 +151,54 @@ const AdminDashboard = () => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
             />
+            <div className="mb-4">
+              <select
+                onChange={(e) => handleSortChange(e.target.value)}
+                value={sort}
+              >
+                <option value="ASC">Ascending</option>
+                <option value="DESC">Descending</option>
+              </select>
+              <select
+                onChange={(e) => handleSortByChange(e.target.value)}
+                value={sortBy}
+              >
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+                <option value="createdAt">Created At</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Category"
+                value={categoryName}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Brand"
+                value={brand}
+                onChange={(e) => handleBrandChange(e.target.value)}
+              />
+            </div>
             <ProductGrid
-              products={filteredProducts}
+              products={products}
               onCreateProduct={handleCreateProduct}
               onUpdateProduct={handleUpdateProduct}
               onRemoveProduct={handleRemoveProduct}
             />
+            <Pagination
+              currentPage={page}
+              totalPages={Math.ceil(totalProducts / pageSize)}
+              onPageChange={handlePageChange}
+            />
+            <select
+              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              value={pageSize}
+            >
+              <option value="10">10 per page</option>
+              <option value="20">20 per page</option>
+              <option value="50">50 per page</option>
+            </select>
           </motion.div>
         );
       case "categories":
