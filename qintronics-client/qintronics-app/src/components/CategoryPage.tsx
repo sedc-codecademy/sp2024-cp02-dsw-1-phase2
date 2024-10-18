@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductList from "./ProductList";
 import { BaseProduct } from "../common/types/products-interface";
-import Loader from "./Loader";
 import axiosInstance from "../common/utils/axios-instance.util";
 
 const CategoryPage = () => {
   const { category = "" } = useParams<{ category: string }>();
   const [filteredProducts, setFilteredProducts] = useState<BaseProduct[]>([]);
-  const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1); // Track current page
   const [pageSize, setPageSize] = useState(8); // Number of products per page
@@ -16,7 +14,6 @@ const CategoryPage = () => {
   const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
 
   const fetchProducts = (page: number, size: number) => {
-    setLoading(true);
     axiosInstance
       .get(
         `/products?sort=ASC&sortBy=name&pageSize=${size}&page=${page}&categoryName=${category}`
@@ -26,11 +23,9 @@ const CategoryPage = () => {
         setTotal(res.data.total);
         setHasNext(res.data.next); // Check if there is a next page
         setHasPrev(res.data.prev); // Check if there is a previous page
-        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
-        setLoading(false);
       });
   };
 
@@ -58,22 +53,18 @@ const CategoryPage = () => {
 
   return (
     <div className="category-page">
-      {loading ? (
-        <Loader /> // Show loader while loading
-      ) : (
-        <ProductList
-          categoryName={category}
-          productList={filteredProducts}
-          total={total}
-          currentPage={currentPage}
-          pageSize={pageSize}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-          hasNext={hasNext}
-          hasPrev={hasPrev}
-          onPageSizeChange={handlePageSizeChange} // Pass page size change handler
-        />
-      )}
+      <ProductList
+        categoryName={category}
+        productList={filteredProducts}
+        total={total}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
+        hasNext={hasNext}
+        hasPrev={hasPrev}
+        onPageSizeChange={handlePageSizeChange} // Pass page size change handler
+      />
     </div>
   );
 };
