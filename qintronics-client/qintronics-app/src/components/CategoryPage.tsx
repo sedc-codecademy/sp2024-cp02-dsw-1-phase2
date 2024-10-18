@@ -2,42 +2,59 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductList from "./ProductList";
 import { BaseProduct } from "../common/types/products-interface";
-import products from "../data/products.json";
-import Loader from "./Loader"; // Import the loader component
+import Loader from "./Loader";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 const CategoryPage = () => {
-  const { category } = useParams<{ category: string }>();
+  const { category = "" } = useParams<{ category: string }>();
   const [filteredProducts, setFilteredProducts] = useState<BaseProduct[]>([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [pageSize, setPageSize] = useState(8); // Number of products per page
+  const [hasNext, setHasNext] = useState(false); // Track if next page exists
+  const [hasPrev, setHasPrev] = useState(false); // Track if previous page exists
 
-  useEffect(() => {
-    // Show loader when category changes
+  const fetchProducts = (page: number, size: number) => {
     setLoading(true);
-
-    if (category) {
-      const filtered = (products as BaseProduct[]).filter((product) => {
-        const normalizedCategory = category.toLowerCase().replace(/\s+/g, "-");
-        const normalizedSubCategory = product.subCategory
-          ?.toLowerCase()
-          .replace(/\s+/g, "-");
-        const normalizedMainCategory = product.category
-          .toLowerCase()
-          .replace(/\s+/g, "-");
-
-        return (
-          normalizedSubCategory === normalizedCategory ||
-          normalizedSubCategory === normalizedCategory.slice(0, -1) || // For singular/plural matching
-          normalizedMainCategory === normalizedCategory
-        );
+    axiosInstance
+      .get(
+        `/products?sort=ASC&sortBy=name&pageSize=${size}&page=${page}&categoryName=${category}`
+      )
+      .then((res) => {
+        setFilteredProducts(res.data.products);
+        setTotal(res.data.total);
+        setHasNext(res.data.next); // Check if there is a next page
+        setHasPrev(res.data.prev); // Check if there is a previous page
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
       });
+  };
 
-      // Simulate loading delay
-      setTimeout(() => {
-        setFilteredProducts(filtered);
-        setLoading(false); // Hide loader after products are filtered
-      }, 800); // Simulate a delay (800ms)
+  // Fetch products when category, page, or page size changes
+  useEffect(() => {
+    fetchProducts(currentPage, pageSize);
+  }, [category, currentPage, pageSize]);
+
+  const handleNextPage = () => {
+    if (hasNext) {
+      setCurrentPage((prevPage) => prevPage + 1);
     }
-  }, [category]);
+  };
+
+  const handlePrevPage = () => {
+    if (hasPrev) {
+      setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1); // Reset to first page when page size changes
+  };
 
   return (
     <div className="category-page">
@@ -45,8 +62,16 @@ const CategoryPage = () => {
         <Loader /> // Show loader while loading
       ) : (
         <ProductList
+          categoryName={category}
           productList={filteredProducts}
-          title={`Products in ${category}`}
+          total={total}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
+          hasNext={hasNext}
+          hasPrev={hasPrev}
+          onPageSizeChange={handlePageSizeChange} // Pass page size change handler
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
 import { ProductCreateDto } from './dtos/product-create.dto';
 import { ProductResponseDto } from './dtos/product-response.dto';
 import { ProductUpdateDto } from './dtos/product-update.dto';
@@ -21,6 +21,7 @@ export class ProductsService {
   ) {}
 
   async getProducts({
+    discount,
     name,
     brand,
     categoryName,
@@ -30,6 +31,13 @@ export class ProductsService {
     sort = 'ASC',
   }: ProductQueryDto): Promise<ProductResponseDto> {
     let whereQuery: FindOptionsWhere<Product> = {};
+
+    if (discount) {
+      whereQuery = {
+        ...whereQuery,
+        discount: MoreThan(0),
+      };
+    }
 
     if (name) {
       whereQuery = {

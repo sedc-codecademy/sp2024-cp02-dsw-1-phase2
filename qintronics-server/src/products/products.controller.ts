@@ -51,6 +51,12 @@ export class ProductsController {
     type: ProductResponseDto,
   })
   @ApiQuery({
+    type: Boolean,
+    name: 'discount',
+    description: 'Discounted Products',
+    required: false,
+  })
+  @ApiQuery({
     type: String,
     name: 'name',
     description: 'Product Name',

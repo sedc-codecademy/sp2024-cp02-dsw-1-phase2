@@ -16,14 +16,13 @@ import LoginPopup from "./components/LoginPopup";
 import MainComponent from "./components/MainComponent";
 import OrderPage from "./components/OrderPage";
 import ProductDetailsPage from "./components/ProductDetailsPage";
-import ProductList from "./components/ProductList";
 import SalesPage from "./components/SalesPage";
 import { CardPaymentProvider } from "./context/card-payment.context";
 import { UserProvider } from "./context/UserContext";
-import products from "./data/products.json";
 import AboutUs from "./components/AboutUs";
 import FAQ from "./components/FAQ";
 import Shipping from "./components/Shipping";
+import Favorites from "./components/Favorites";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
@@ -31,11 +30,6 @@ function App() {
 
   const toggleLoginPopup = () => setIsLoginPopupOpen(!isLoginPopupOpen);
   const toggleChat = () => setIsChatOpen(!isChatOpen);
-
-  const convertedProducts = products.map((product) => ({
-    ...product,
-    price: Number(product.price),
-  }));
 
   return (
     <UserProvider>
@@ -50,14 +44,11 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<OrderPage />} />
                 <Route path="/payment" element={<CardPaymentForm />} />
+                <Route path="/favorites" element={<Favorites />} />
               </Route>
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/compare" element={<CompareProducts />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route
-                path="/products"
-                element={<ProductList productList={convertedProducts} />}
-              />
               <Route path="/products/:id" element={<ProductDetailsPage />} />
               <Route path="/sales" element={<SalesPage />} />
               <Route path="/category/:category" element={<CategoryPage />} />

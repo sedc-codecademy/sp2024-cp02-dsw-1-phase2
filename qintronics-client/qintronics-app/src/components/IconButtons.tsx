@@ -21,9 +21,13 @@ const IconButtons = ({
           <ShoppingCart size={20} />
         </button>
       </Link>
-      <button className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800">
-        <Heart size={20} />
-      </button>
+
+      <Link to="/favorites">
+        <button className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800">
+          <Heart size={20} />
+        </button>
+      </Link>
+
       <Link to="/compare" className="relative group">
         <button className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800">
           <ArrowRightLeft size={20} />

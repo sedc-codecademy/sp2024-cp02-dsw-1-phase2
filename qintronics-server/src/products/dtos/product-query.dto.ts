@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
+  @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  discount?: boolean;
+
   @IsString()
   @IsOptional()
   name?: string;
