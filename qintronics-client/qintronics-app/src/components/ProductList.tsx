@@ -17,7 +17,7 @@ interface ProductListProps {
   onPrevPage: () => void;
   hasNext: boolean;
   hasPrev: boolean;
-  onPageSizeChange: (size: number) => void; // New handler for changing page size
+  onPageSizeChange: (size: number) => void; // Handler for changing page size
 }
 
 const ProductList = ({
@@ -31,14 +31,13 @@ const ProductList = ({
   onPrevPage,
   hasNext,
   hasPrev,
-  onPageSizeChange, // Accept page size change handler
+  onPageSizeChange,
 }: ProductListProps) => {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
-    console.log(category);
   }, [productList]);
 
   const handleProductClick = (id: string) => {
@@ -47,7 +46,7 @@ const ProductList = ({
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = parseInt(e.target.value, 10);
-    onPageSizeChange(newSize); // Trigger the page size change
+    onPageSizeChange(newSize);
   };
 
   return (
@@ -58,23 +57,59 @@ const ProductList = ({
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6">
             {title} {category}
           </h1>
-          <div className="flex justify-end w-full mb-4">
-            <label htmlFor="pageSize" className="mr-2">
-              Products per page:
-            </label>
-            <select
-              id="pageSize"
-              value={pageSize}
-              onChange={handlePageSizeChange}
-              className="border border-gray-300 rounded-lg p-2"
-            >
-              <option value={8}>8</option>
-              <option value={16}>16</option>
-              <option value={24}>24</option>
-            </select>
+
+          {/* Centered Dropdown and Pagination Controls */}
+          <div className="flex flex-col items-center w-full mb-4">
+            {/* Products per page */}
+            <div className="flex justify-center items-center mb-4">
+              <label htmlFor="pageSize" className="mr-2 text-lg font-medium">
+                Products per page:
+              </label>
+              <select
+                id="pageSize"
+                value={pageSize}
+                onChange={handlePageSizeChange}
+                className="border border-gray-300 text-black rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#1BD8C4] focus:border-[#1BD8C4] transition-all duration-300"
+              >
+                <option value={8}>8</option>
+                <option value={16}>16</option>
+                <option value={24}>24</option>
+              </select>
+            </div>
+
+            {/* Pagination Buttons */}
+            <div className="flex justify-center items-center mb-6">
+              <button
+                onClick={onPrevPage}
+                disabled={!hasPrev}
+                className={`px-4 py-2 rounded-lg text-white font-bold ${
+                  hasPrev
+                    ? "bg-[#1A3F6B] hover:bg-white hover:text-[#1A3F6B] border border-transparent hover:border-[#1A3F6B]"
+                    : "bg-gray-300 cursor-not-allowed"
+                } transition-all duration-300`}
+              >
+                Previous
+              </button>
+              <span className="mx-4">
+                Page {currentPage} of {Math.ceil(total / pageSize)}
+              </span>
+              <button
+                onClick={onNextPage}
+                disabled={!hasNext}
+                className={`px-4 py-2 rounded-lg text-white font-bold ${
+                  hasNext
+                    ? "bg-[#1A3F6B] hover:bg-white hover:text-[#1A3F6B] border border-transparent hover:border-[#1A3F6B]"
+                    : "bg-gray-300 cursor-not-allowed"
+                } transition-all duration-300`}
+              >
+                Next
+              </button>
+            </div>
           </div>
+
+          {/* Products Grid */}
           <div
-            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 w-full justify-center items-center ${
+            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 w-full justify-center items-center ${
               isLoaded ? "flip-in" : ""
             }`}
           >
@@ -170,31 +205,6 @@ const ProductList = ({
             ) : (
               <p className="text-center text-lg">No products available.</p>
             )}
-          </div>
-
-          {/* Pagination Controls */}
-          <div className="flex justify-center mt-6 space-x-4">
-            <button
-              onClick={onPrevPage}
-              disabled={!hasPrev}
-              className={`px-4 py-2 bg-gray-300 rounded-lg ${
-                hasPrev ? "hover:bg-gray-400" : "cursor-not-allowed"
-              }`}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {Math.ceil(total / pageSize)}
-            </span>
-            <button
-              onClick={onNextPage}
-              disabled={!hasNext}
-              className={`px-4 py-2 bg-gray-300 rounded-lg ${
-                hasNext ? "hover:bg-gray-400" : "cursor-not-allowed"
-              }`}
-            >
-              Next
-            </button>
           </div>
         </div>
       </div>
