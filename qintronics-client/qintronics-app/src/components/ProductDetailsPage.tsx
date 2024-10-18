@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import products from "../data/products.json";
 import { BaseProduct } from "../common/types/products-interface";
 import { useState, useRef, useEffect } from "react";
 import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
 import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
 import Sidebar from "./Sidebar";
+import axiosInstance from "../common/utils/axios-instance.util";
 
 const formatKey = (key: string) => {
   return key
@@ -15,7 +15,19 @@ const formatKey = (key: string) => {
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const product = (products as BaseProduct[]).find((prod) => prod.id === id);
+  // const product = (products as BaseProduct[]).find((prod) => prod.id === id);
+  const [product, setProduct] = useState<BaseProduct | null>(null);
+
+  useEffect(() => {
+    axiosInstance
+      .get(`/products/${id}`)
+      .then((res) => {
+        setProduct(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   const [quantity, setQuantity] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
