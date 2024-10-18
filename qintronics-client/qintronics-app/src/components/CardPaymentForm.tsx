@@ -29,7 +29,7 @@ const savedCards = [
     id: 2,
     cardNumber: "**** **** **** 5123",
     name: "John Doe",
-    expiry: "08/2024",
+    expiry: "12/2025",
     expired: false,
     type: "Visa",
   },
@@ -80,7 +80,7 @@ const CardPaymentForm: React.FC = () => {
       const cleaned = value.replace(/\D/g, "");
       setCardData((prevData) => ({
         ...prevData,
-        cvv: cleaned.slice(0, 4), // Limit the CVV to 4 digits
+        cvv: cleaned.slice(0, 4),
       }));
     } else {
       setCardData((prevData) => ({
@@ -92,7 +92,6 @@ const CardPaymentForm: React.FC = () => {
 
   const handlePaymentSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const expirationDate = `${cardData.expiryMonth}/${cardData.expiryYear}`;
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
 
     if (
@@ -388,8 +387,8 @@ const CardPaymentForm: React.FC = () => {
                   handleInputChange(e);
                   setIsCardFlipped(true); // Flip the card when typing
                 }}
-                onFocus={() => setIsCardFlipped(true)} // Flip the card when clicking into the CVV input
-                onBlur={() => setIsCardFlipped(false)} // Flip back when leaving the CVV input
+                onFocus={() => setIsCardFlipped(true)}
+                onBlur={() => setIsCardFlipped(false)}
                 className="pl-10 pr-4 py-3 border border-darkGray focus:ring-secondary focus:border-secondary w-full rounded-xl focus:outline-none"
                 required
                 placeholder="* * * *"
