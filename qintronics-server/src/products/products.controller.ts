@@ -31,6 +31,9 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/roles.enum';
 import { PublicRoute } from 'src/common/decorators/public-route.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { ICurrentUser } from 'src/common/types/current-user.interface';
+import { ProductFavoriteDto } from './dtos/product-favorite.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -45,7 +48,13 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get Products' })
   @ApiOkResponse({
     description: 'Retrieved all products.',
-    type: [Product],
+    type: ProductResponseDto,
+  })
+  @ApiQuery({
+    type: Boolean,
+    name: 'discount',
+    description: 'Discounted Products',
+    required: false,
   })
   @ApiQuery({
     type: String,
@@ -156,6 +165,48 @@ export class ProductsController {
     @Body() body: ProductUpdateDto,
   ): Promise<Product> {
     return this.productsService.updateProduct(id, body);
+  }
+
+  // ========== FAVORITE PRODUCT ==========
+  @Post('/favorite')
+  @ApiOperation({ summary: 'Favorite Product' })
+  @ApiOkResponse({
+    description: 'Product favorited or unfavorited successfully.',
+    type: Product,
+  })
+  @ApiBody({
+    type: ProductFavoriteDto,
+  })
+  @Roles(Role.Customer)
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  favoriteProduct(
+    @Body() body: ProductFavoriteDto,
+    @CurrentUser() user: ICurrentUser,
+  ): Promise<void> {
+    return this.productsService.favoriteProduct(body.productId, user.userId);
+  }
+
+  // ========== GET USER FAVORITE PRODUCTS ==========
+  @Get('/user/favorite')
+  @ApiOperation({ summary: 'Get user favorite products' })
+  @ApiOkResponse({
+    description: 'Retrieved user favorite products.',
+    type: [Product],
+  })
+  @ApiUnauthorizedResponse({
+    description: 'User needs to be logged in to access this page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  @Roles(Role.Customer)
+  getFavoriteProducts(@CurrentUser() user: ICurrentUser): Promise<Product[]> {
+    return this.productsService.getFavoriteProducts(user.userId);
   }
 
   // ========== DELETE PRODUCT ==========

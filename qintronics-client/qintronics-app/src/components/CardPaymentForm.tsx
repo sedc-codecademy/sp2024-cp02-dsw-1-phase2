@@ -1,7 +1,5 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import {
-  FaCcVisa,
-  FaCcMastercard,
   FaExclamationCircle,
   FaUser,
   FaCreditCard,
@@ -23,7 +21,6 @@ const savedCards = [
     name: "Filip Mladenovski",
     expiry: "05/2022",
     expired: true,
-    type: "MasterCard",
   },
   {
     id: 2,
@@ -31,7 +28,13 @@ const savedCards = [
     name: "John Doe",
     expiry: "12/2025",
     expired: false,
-    type: "Visa",
+  },
+  {
+    id: 3,
+    cardNumber: "**** **** **** 7890",
+    name: "Alice Johnson",
+    expiry: "11/2024",
+    expired: false,
   },
 ];
 
@@ -48,12 +51,15 @@ const CardPaymentForm: React.FC = () => {
     cvv: "",
   });
 
+  // Function to detect card type based on card number
   const detectCardType = (cardNumber: string) => {
     const firstDigit = cardNumber[0];
     const firstTwoDigits = cardNumber.slice(0, 2);
 
     if (firstDigit === "4") return "Visa";
     if (firstTwoDigits >= "51" && firstTwoDigits <= "55") return "MasterCard";
+    if (firstTwoDigits === "34" || firstTwoDigits === "37")
+      return "AmericanExpress";
     return ""; // Return empty string if no match
   };
 
@@ -68,6 +74,7 @@ const CardPaymentForm: React.FC = () => {
         cardNumber: formattedValue,
       }));
 
+      // Detect and set card type based on number
       const detectedType = detectCardType(cleaned);
       setCardType(detectedType);
     } else if (name === "expiryMonth" || name === "expiryYear") {
@@ -155,9 +162,13 @@ const CardPaymentForm: React.FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto">
-      <h2 className="text-3xl font-bold text-primary mb-6 text-center" >Card Payment</h2>
+      <h2 className="text-3xl font-bold text-primary mb-6 text-center">
+        Card Payment
+      </h2>
 
-      <h3 className="text-lg font-medium mb-4">Select Your Credit or Debit Cards</h3>
+      <h3 className="text-lg font-medium mb-4">
+        Select Your Credit or Debit Cards
+      </h3>
       <ul className="space-y-4">
         {savedCards.map((card) => (
           <li
@@ -167,12 +178,8 @@ const CardPaymentForm: React.FC = () => {
             }`}
           >
             <div className="flex items-center">
-              {card.type === "Visa" && (
-                <FaCcVisa className="text-blue-600 text-3xl mr-4" />
-              )}
-              {card.type === "MasterCard" && (
-                <FaCcMastercard className="text-yellow-500 text-3xl mr-4" />
-              )}
+              {/* Always use default card icon in this section */}
+              <FaCreditCard className="mr-2 text-secondary text-lg" />
               <input
                 type="radio"
                 name="savedCard"
@@ -238,6 +245,7 @@ const CardPaymentForm: React.FC = () => {
                       width="60px"
                       alt="chip"
                     />
+                    {/* Show card logo based on detected card type */}
                     {cardType === "Visa" && (
                       <img
                         src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
@@ -250,6 +258,13 @@ const CardPaymentForm: React.FC = () => {
                         src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg"
                         width="60px"
                         alt="MasterCard"
+                      />
+                    )}
+                    {cardType === "AmericanExpress" && (
+                      <img
+                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
+                        width="60px"
+                        alt="American Express"
                       />
                     )}
                   </div>
@@ -288,11 +303,6 @@ const CardPaymentForm: React.FC = () => {
                   <div className="row card-text"></div>
                   <div className="row signature">
                     <p>CUSTOMER SIGNATURE</p>
-                    <img
-                      src="https://i.ibb.co/WHZ3nRJ/visa.png"
-                      width="80px"
-                      alt="visa"
-                    />
                   </div>
                 </div>
               </div>

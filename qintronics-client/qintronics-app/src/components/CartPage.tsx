@@ -1,49 +1,26 @@
-import React, { useState } from "react";
-import {
-  FaBox,
-  FaDollarSign,
-  FaSortAmountUp,
-  FaCalculator,
-} from "react-icons/fa";
-import { IoBagCheckOutline } from "react-icons/io5";
-import { MdShoppingCartCheckout } from "react-icons/md";
-import { HiOutlineXMark } from "react-icons/hi2";
-import { HiPlus, HiMinus } from "react-icons/hi";
-import { BsCartX } from "react-icons/bs";
+import React, { useState, useEffect } from "react";
+import { HiOutlineXMark, HiPlus, HiMinus } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
+import { BsCartX } from "react-icons/bs";
+import { FaBox, FaDollarSign, FaSortAmountUp, FaCalculator } from "react-icons/fa";
+import { MdShoppingCartCheckout } from "react-icons/md";
+import { IoBagCheckOutline } from "react-icons/io5";
 
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Iphone 15 pro",
-      sku: "Full-frame mirror less camera with 24.5MP resolution and 4K video recording.",
-      price: 399,
-      quantity: 1,
-      image: "/iphone-pro.jpg",
-    },
-    {
-      id: 2,
-      name: "Canon EOS R5",
-      sku: "Full-frame mirror less camera with 45MP resolution and 8K video recording.",
-      price: 599,
-      quantity: 3,
-      image: "/canon.jpg",
-    },
-    {
-      id: 3,
-      name: "Razer BlackWidow V3",
-      sku: "Mechanical keyboard with RGB lighting.",
-      price: 799,
-      quantity: 5,
-      image: "/razor.jpg",
-    },
-  ]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
 
   const navigate = useNavigate();
 
-  const handleIncrement = (id: number) => {
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // Increment product quantity
+  const handleIncrement = (id: string) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
@@ -51,7 +28,8 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const handleDecrement = (id: number) => {
+  // Decrement product quantity
+  const handleDecrement = (id: string) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id && item.quantity > 1
@@ -61,8 +39,10 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const handleRemoveItem = (id: number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  // Remove specific product from cart
+  const handleRemoveItem = (id: string) => {
+    const updatedCart = cartItems.filter((item) => item.id !== id);
+    setCartItems(updatedCart);
   };
 
   const calculateTotal = () => {
@@ -84,9 +64,7 @@ const CartPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Looks like your cart is empty!
           </h2>
-          <p className="text-lg text-gray-500 mb-8">
-            Time to start your shopping
-          </p>
+          <p className="text-lg text-gray-500 mb-8">Time to start your shopping</p>
           <button
             className="bg-blue-600 text-white flex justify-center items-center px-8 py-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform hover:scale-105"
             onClick={() => navigate("/")}
@@ -106,24 +84,15 @@ const CartPage: React.FC = () => {
                   Product
                 </th>
                 <th className="py-3 text-center">
-                  <FaDollarSign
-                    className="inline mr-2"
-                    color="rgb(27 217 197)"
-                  />
+                  <FaDollarSign className="inline mr-2" color="rgb(27 217 197)" />
                   Price
                 </th>
                 <th className="py-3 text-center">
-                  <FaSortAmountUp
-                    className="inline mr-2"
-                    color="rgb(27 217 197)"
-                  />
+                  <FaSortAmountUp className="inline mr-2" color="rgb(27 217 197)" />
                   Quantity
                 </th>
                 <th className="py-3 text-center">
-                  <FaCalculator
-                    className="inline mr-2"
-                    color="rgb(27 217 197)"
-                  />
+                  <FaCalculator className="inline mr-2" color="rgb(27 217 197)" />
                   Subtotal
                 </th>
               </tr>
@@ -147,7 +116,7 @@ const CartPage: React.FC = () => {
                     />
                     <div>
                       <p className="font-semibold text-gray-900">{item.name}</p>
-                      <p className="text-gray-500 text-xs">{item.sku}</p>
+                      <p className="text-gray-500 text-xs">{item.description}</p>
                     </div>
                   </td>
                   <td className="py-4 text-center font-semibold text-gray-900 px-4">
@@ -161,14 +130,12 @@ const CartPage: React.FC = () => {
                       >
                         <HiMinus size={18} />
                       </button>
-
                       <input
                         type="text"
                         value={item.quantity}
                         readOnly
                         className="w-12 text-center border border-gray-300 rounded-md"
                       />
-
                       <button
                         className="px-3 py-1 bg-green-500 text-white rounded-md shadow hover:bg-green-600 transition-all"
                         onClick={() => handleIncrement(item.id)}
@@ -186,7 +153,8 @@ const CartPage: React.FC = () => {
           </table>
 
           <div className="mt-6 flex justify-between items-center">
-            <button className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out">
+            <button className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold px-8 py-4 rounded-full shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl duration-300 ease-in-out"
+             onClick={() => navigate("/")}>
               <MdShoppingCartCheckout className="mr-2" size={18} />
               Continue Shopping
             </button>

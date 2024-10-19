@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProductQueryDto {
+  @IsBoolean()
+  @IsOptional()
+  @Type(() => Boolean)
+  discount?: boolean;
+
   @IsString()
   @IsOptional()
   name?: string;
@@ -16,10 +22,12 @@ export class ProductQueryDto {
 
   @IsInt()
   @IsOptional()
+  @Type(() => Number)
   page?: number = 1;
 
   @IsInt()
   @IsOptional()
+  @Type(() => Number)
   pageSize?: number = 10;
 
   @IsString()
