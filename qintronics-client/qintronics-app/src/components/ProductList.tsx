@@ -5,7 +5,7 @@ import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-p
 import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
 import Sidebar from "./Sidebar";
-import Loader from "./Loader"; // Import the Loader component
+import Loader from "./Loader"; 
 
 interface ProductListProps {
   categoryName: string;
@@ -48,6 +48,12 @@ const ProductList = ({
 
   const handleProductClick = (id: string) => {
     navigate(`/products/${id}`);
+  };
+
+  const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>, productId: string) => {
+    event.stopPropagation(); // Prevent the click event from bubbling up to the product card
+    // Add the product to the cart logic here
+    console.log(`Added product ${productId} to cart`);
   };
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -118,7 +124,7 @@ const ProductList = ({
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full justify-center items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-[90%] justify-center items-center">
               {productList.length > 0 ? (
                 productList.map((product, index) => {
                   const price = Number(product.price);
@@ -200,6 +206,7 @@ const ProductList = ({
                         <button
                           className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
                           aria-label="Add to Cart"
+                          onClick={(event) => handleAddToCart(event, product.id)} // Add click handler
                         >
                           <FaShoppingCart className="mr-2" />
                           Add to Cart
