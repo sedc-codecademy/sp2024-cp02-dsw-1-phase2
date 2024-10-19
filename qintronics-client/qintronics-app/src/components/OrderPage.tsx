@@ -59,11 +59,10 @@ const CheckoutForm: React.FC = () => {
         });
       })
       .catch((err) => {
-        // do something if you get error
         console.error(err);
       });
   }, []);
-  // Handle input field changes
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -76,7 +75,6 @@ const CheckoutForm: React.FC = () => {
     updateProgress();
   };
 
-  // Handle changes to the payment method selection
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method);
     setIsSubmitted(false);
@@ -104,7 +102,6 @@ const CheckoutForm: React.FC = () => {
     }
   };
 
-  // Validate individual fields
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
     switch (name) {
@@ -136,7 +133,6 @@ const CheckoutForm: React.FC = () => {
     setErrors(newErrors);
   };
 
-  // Update progress based on filled fields (counting 8 input fields)
   const updateProgress = () => {
     const fieldsToCheck = [
       "firstName",
@@ -149,7 +145,7 @@ const CheckoutForm: React.FC = () => {
       "deliveryDay",
     ];
 
-    const totalFields = fieldsToCheck.length; // 8 fields
+    const totalFields = fieldsToCheck.length;
     const filledFields = fieldsToCheck.filter(
       (field) => formData[field as keyof FormData].trim() !== ""
     ).length;
@@ -158,12 +154,11 @@ const CheckoutForm: React.FC = () => {
     setProgress(Math.round(progressPercentage));
   };
 
-  // Validate the entire checkout form
   const validateCheckoutForm = () => {
     const newErrors: FormErrors = {};
     Object.keys(formData).forEach((key) => {
       const value = formData[key as keyof FormData];
-      if (!value.trim()) {
+      if (typeof value === "string" && !value.trim()) {
         newErrors[key as keyof FormErrors] = "This field is required";
       }
     });
@@ -174,7 +169,6 @@ const CheckoutForm: React.FC = () => {
     return isValid;
   };
 
-  // Handle confirm button click
   const handleConfirmOrder = () => {
     Swal.fire({
       icon: "success",
@@ -189,9 +183,10 @@ const CheckoutForm: React.FC = () => {
     });
   };
 
-  // Render validation icons
   const renderValidationIcon = (field: keyof FormData) => {
-    if (!formData[field].trim()) return null;
+    const fieldValue = formData[field];
+
+    if (typeof fieldValue === "string" && fieldValue.trim() === "") return null;
 
     return errors[field] ? (
       <FaTimes className="absolute right-3 text-red-500" />
@@ -389,9 +384,7 @@ const CheckoutForm: React.FC = () => {
                     {renderValidationIcon("zipCode")}
                   </div>
                   {errors.zipCode && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.zipCode}
-                    </p>
+                    <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>
                   )}
                 </div>
 

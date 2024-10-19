@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   FaExclamationCircle,
   FaUser,
@@ -12,35 +12,12 @@ import { AiOutlinePlus } from "react-icons/ai";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../styles/card.css";
-
-// Sample saved cards data
-const savedCards = [
-  {
-    id: 1,
-    cardNumber: "**** **** **** 1193",
-    name: "Filip Mladenovski",
-    expiry: "05/2022",
-    expired: true,
-  },
-  {
-    id: 2,
-    cardNumber: "**** **** **** 5123",
-    name: "John Doe",
-    expiry: "12/2025",
-    expired: false,
-  },
-  {
-    id: 3,
-    cardNumber: "**** **** **** 7890",
-    name: "Alice Johnson",
-    expiry: "11/2024",
-    expired: false,
-  },
-];
+import axiosInstance from "../common/utils/axios-instance.util";
+import { SavedCard } from "../common/interfaces/saved.card.interface";
 
 const CardPaymentForm: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [cardType, setCardType] = useState<string>("");
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [cardData, setCardData] = useState({
@@ -50,6 +27,18 @@ const CardPaymentForm: React.FC = () => {
     expiryYear: "",
     cvv: "",
   });
+  const [savedCard, setSavedCard] = useState<SavedCard>();
+
+  useEffect(() => {
+    axiosInstance
+      .get("/users/me")
+      .then((res) => {
+        res.data.userInfo.ccNum ? setSavedCard(res.data.userInfo) : null;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   // Function to detect card type based on card number
   const detectCardType = (cardNumber: string) => {
@@ -101,6 +90,10 @@ const CardPaymentForm: React.FC = () => {
     e.preventDefault();
     const cardNumberWithoutSpaces = cardData.cardNumber.replace(/\s+/g, "");
 
+    const currentYear = new Date().getFullYear() % 100; // Get last two digits of the current year
+    const currentMonth = new Date().getMonth() + 1; // Get the current month
+
+    // Card number validation
     if (
       cardNumberWithoutSpaces.length !== 16 ||
       isNaN(Number(cardNumberWithoutSpaces))
@@ -113,6 +106,7 @@ const CardPaymentForm: React.FC = () => {
       return;
     }
 
+    // Expiry month validation
     if (
       parseInt(cardData.expiryMonth) < 1 ||
       parseInt(cardData.expiryMonth) > 12 ||
@@ -121,6 +115,20 @@ const CardPaymentForm: React.FC = () => {
       Swal.fire(
         "Invalid Expiry Month",
         "Please enter a valid expiry month (01-12).",
+        "error"
+      );
+      return;
+    }
+
+    // Expiry date validation (past dates not allowed)
+    if (
+      parseInt(cardData.expiryYear) < currentYear ||
+      (parseInt(cardData.expiryYear) === currentYear &&
+        parseInt(cardData.expiryMonth) < currentMonth)
+    ) {
+      Swal.fire(
+        "Invalid Expiry Date",
+        "The expiry date cannot be in the past.",
         "error"
       );
       return;
@@ -167,47 +175,49 @@ const CardPaymentForm: React.FC = () => {
       </h2>
 
       <h3 className="text-lg font-medium mb-4">
-        Select Your Credit or Debit Cards
+      Select your saved card, or pay with another.
       </h3>
       <ul className="space-y-4">
-        {savedCards.map((card) => (
-          <li
-            key={card.id}
-            className={`flex items-center justify-between p-4 rounded-lg border ${
-              card.expired ? "border-red-500 bg-red-50" : "border-gray-300"
-            }`}
-          >
-            <div className="flex items-center">
-              {/* Always use default card icon in this section */}
-              <FaCreditCard className="mr-2 text-secondary text-lg" />
-              <input
-                type="radio"
-                name="savedCard"
-                id={`card-${card.id}`}
-                className="mr-4"
-                onChange={() => setSelectedCardId(card.id)}
-              />
-              <label
-                htmlFor={`card-${card.id}`}
-                className="flex flex-col space-y-1"
-              >
-                <span className="font-medium text-lg">
-                  {card.cardNumber} — {card.name}
-                </span>
-                {card.expired ? (
-                  <span className="text-red-500 text-sm flex items-center">
-                    <FaExclamationCircle className="mr-2" />
-                    Expired
-                  </span>
+        <li>
+          <div className="flex items-center">
+            <FaCreditCard className="mr-2 text-secondary text-lg" />
+            <input
+              type="radio"
+              name="savedCard"
+              id={`card-${savedCard?.id}`}
+              className="mr-4"
+              onChange={() => setSelectedCardId(savedCard?.id ?? null)}
+            />
+            <label
+              htmlFor={`card-${savedCard?.id}`}
+              className="flex flex-col space-y-1"
+            >
+              <span className="font-medium text-lg">
+                {savedCard?.ccNum} — {savedCard?.firstName}
+              </span>
+              {savedCard && savedCard.expDate ? (
+                !isNaN(Date.parse(savedCard.expDate)) ? (
+                  new Date(savedCard.expDate) > new Date() ? (
+                    <span className="text-gray-500 text-sm">
+                       Valid until {new Date(savedCard.expDate as string).toLocaleDateString("en-US", { month: "2-digit", year: "2-digit" })}
+                    </span>
+                  ) : (
+                    <span className="text-red-500 text-sm flex items-center">
+                      <FaExclamationCircle className="mr-2" />
+                      Expired
+                    </span>
+                  )
                 ) : (
                   <span className="text-gray-500 text-sm">
-                    Valid until {card.expiry}
+                    Invalid expiry date
                   </span>
-                )}
-              </label>
-            </div>
-          </li>
-        ))}
+                )
+              ) : (
+                <span className="text-gray-500 text-sm">N/A</span>
+              )}
+            </label>
+          </div>
+        </li>
       </ul>
 
       {selectedCardId ? (
@@ -226,7 +236,7 @@ const CardPaymentForm: React.FC = () => {
             <AiOutlinePlus className="mr-2 text-secondary text-lg" />
             Add a New Card
           </h3>
-          {/* Credit Card Preview */}
+          {/* Card Preview */}
           <div className="card-container">
             <div
               className="card"
@@ -245,7 +255,6 @@ const CardPaymentForm: React.FC = () => {
                       width="60px"
                       alt="chip"
                     />
-                    {/* Show card logo based on detected card type */}
                     {cardType === "Visa" && (
                       <img
                         src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
@@ -262,7 +271,7 @@ const CardPaymentForm: React.FC = () => {
                     )}
                     {cardType === "AmericanExpress" && (
                       <img
-                       src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/2052px-American_Express_logo_%282018%29.svg.png"
                         width="60px"
                         alt="American Express"
                       />
