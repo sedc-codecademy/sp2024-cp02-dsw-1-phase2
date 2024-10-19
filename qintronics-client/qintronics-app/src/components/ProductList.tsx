@@ -5,6 +5,8 @@ import calculateDiscountedPrice from "../common/helpers/calculate-discount-for-p
 import { FaShoppingCart } from "react-icons/fa";
 import { ArrowRightLeft, Heart } from "lucide-react";
 import Sidebar from "./Sidebar";
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
 
 interface ProductListProps {
   categoryName: string;
@@ -159,6 +161,17 @@ const ProductList = ({
                       <button
                         className="mt-4 bg-[#1A3F6B] text-white font-bold py-1 px-3 rounded-lg mx-auto shadow-lg transition-all duration-300 border-2 border-transparent hover:bg-white hover:text-[#1A3F6B] hover:border-[#1A3F6B] flex items-center uppercase"
                         aria-label="Add to Cart"
+                        onClick={() => {
+                          const cartItem: CartItem = {
+                            id: product.id,
+                            name: product.name,
+                            description: product.description,
+                            price: product.price,
+                            quantity: 1, // Set default quantity to 1
+                            image: product.img,
+                          };
+                          addToCart(cartItem); // Add product to cart
+                        }}
                       >
                         <FaShoppingCart className="mr-2" />
                         Add to Cart

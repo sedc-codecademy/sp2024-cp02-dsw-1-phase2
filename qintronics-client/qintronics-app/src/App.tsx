@@ -41,11 +41,11 @@ function App() {
             <Routes>
               <Route path="/" element={<MainComponent />} />
               <Route path="/cart" element={<CartPage />} />
-              {/* <Route element={<PrivateRoute />}> */}
+              <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<OrderPage />} />
                 <Route path="/payment" element={<CardPaymentForm />} />
                 <Route path="/favorites" element={<Favorites />} />
-              {/* </Route> */}
+              </Route>
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/compare" element={<CompareProducts />} />
               <Route path="/dashboard" element={<Dashboard />} />

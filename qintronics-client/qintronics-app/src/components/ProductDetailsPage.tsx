@@ -5,6 +5,8 @@ import { FaMinus, FaPlus, FaShoppingCart, FaSearchPlus } from "react-icons/fa";
 import { Heart, ArrowRightLeft } from "lucide-react"; // Importing lucide-react icons
 import Sidebar from "./Sidebar";
 import axiosInstance from "../common/utils/axios-instance.util";
+import addToCart from "../common/utils/addToCart";
+import { CartItem } from "../common/interfaces/cart.item.interface";
 
 const formatKey = (key: string) => {
   return key
@@ -263,7 +265,18 @@ const ProductDetailsPage = () => {
                     <FaPlus />
                   </button>
                 </div>
-                <button className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center uppercase">
+                <button className="bg-[#1A3F6B] text-white font-bold py-2 px-4 rounded-lg shadow-lg border-2 border-[#1A3F6B] transition-all duration-300 hover:bg-white hover:text-[#1A3F6B] flex items-center uppercase"
+                onClick={() => {
+                  const cartItem: CartItem = {
+                    id: product.id,
+                    name: product.name,
+                    description: product.description,
+                    price: product.price,
+                    quantity: 1, // Set default quantity to 1
+                    image: product.img,
+                  };
+                  addToCart(cartItem); // Add product to cart
+                }}>
                   <FaShoppingCart className="mr-2" />
                   Add to Cart
                 </button>
