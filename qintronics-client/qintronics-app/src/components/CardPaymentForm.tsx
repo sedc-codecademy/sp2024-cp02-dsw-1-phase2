@@ -6,9 +6,10 @@ import {
   FaLock,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { BsCalendar2MonthFill } from "react-icons/bs";
+import { BsCalendar2MonthFill, BsCreditCard2FrontFill } from "react-icons/bs";
 import { TbCreditCardPay } from "react-icons/tb";
 import { AiOutlinePlus } from "react-icons/ai";
+import { GrCheckboxSelected } from "react-icons/gr";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../styles/card.css";
@@ -170,17 +171,20 @@ const CardPaymentForm: React.FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto">
-      <h2 className="text-3xl font-bold text-primary mb-6 text-center">
+      <h2 className="text-3xl font-semibold text-primary text-center mb-12 flex justify-center items-center">
         Card Payment
+        <BsCreditCard2FrontFill className="ml-2 text-blue-500" />
       </h2>
 
-      <h3 className="text-lg font-medium mb-4">
-      Select your saved card, or pay with another.
+      <h3 className="text-xl font-semibold mb-6 flex items-center">
+        <GrCheckboxSelected className="mr-2 text-secondary text-lg" />
+        Select your saved card, or pay with another.
       </h3>
-      <ul className="space-y-4">
+
+      <ul className="space-y-6">
         <li>
-          <div className="flex items-center">
-            <FaCreditCard className="mr-2 text-secondary text-lg" />
+          <div className="flex items-center p-6 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl shadow-sm hover:shadow-lg hover:bg-white transition-all duration-300">
+            <FaCreditCard className="mr-3 text-indigo-500 text-xl" />
             <input
               type="radio"
               name="savedCard"
@@ -190,36 +194,39 @@ const CardPaymentForm: React.FC = () => {
             />
             <label
               htmlFor={`card-${savedCard?.id}`}
-              className="flex flex-col space-y-1"
+              className="flex flex-col space-y-1 text-gray-800"
             >
-              <span className="font-medium text-lg">
+              <span className="font-semibold text-lg">
                 {savedCard?.ccNum} — {savedCard?.firstName}
               </span>
               {savedCard && savedCard.expDate ? (
                 !isNaN(Date.parse(savedCard.expDate)) ? (
                   new Date(savedCard.expDate) > new Date() ? (
-                    <span className="text-gray-500 text-sm">
-                       Valid until {new Date(savedCard.expDate as string).toLocaleDateString("en-US", { month: "2-digit", year: "2-digit" })}
+                    <span className="text-sm text-gray-500">
+                      Valid until{" "}
+                      {new Date(savedCard.expDate as string).toLocaleDateString(
+                        "en-US",
+                        { month: "2-digit", year: "2-digit" }
+                      )}
                     </span>
                   ) : (
-                    <span className="text-red-500 text-sm flex items-center">
+                    <span className="text-sm text-red-500 flex items-center">
                       <FaExclamationCircle className="mr-2" />
                       Expired
                     </span>
                   )
                 ) : (
-                  <span className="text-gray-500 text-sm">
+                  <span className="text-sm text-gray-500">
                     Invalid expiry date
                   </span>
                 )
               ) : (
-                <span className="text-gray-500 text-sm">N/A</span>
+                <span className="text-sm text-gray-500">N/A</span>
               )}
             </label>
           </div>
         </li>
       </ul>
-
       {selectedCardId ? (
         <div className="mt-6 flex justify-center">
           <button
