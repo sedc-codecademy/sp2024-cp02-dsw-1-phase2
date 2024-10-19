@@ -71,7 +71,6 @@ const ProductList = ({
 
             {/* Centered Dropdown and Pagination Controls */}
             <div className="flex flex-col items-center w-full mb-4">
-              {/* Products per page */}
               <div className="flex justify-center items-center mb-4">
                 <label htmlFor="pageSize" className="mr-2 text-lg font-medium">
                   Products per page:
@@ -119,11 +118,7 @@ const ProductList = ({
             </div>
 
             {/* Products Grid */}
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 w-full justify-center items-center ${
-                isLoaded ? "flip-in" : ""
-              }`}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full justify-center items-center">
               {productList.length > 0 ? (
                 productList.map((product, index) => {
                   const price = Number(product.price);
@@ -139,7 +134,7 @@ const ProductList = ({
 
                   return (
                     <div
-                      className={`relative mx-auto w-64 h-96 min-h-[28rem] rounded-lg text-center cursor-pointer transform transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group`}
+                      className={`relative mx-auto w-full sm:w-60 md:w-64 lg:w-72 xl:w-80 h-auto rounded-lg text-center cursor-pointer transition-all ease-in-out duration-300 hover:scale-105 shadow-lg hover:border hover:border-[#1A3F6B] bg-white product-card flex flex-col justify-between group`}
                       key={product.id}
                       onClick={() => handleProductClick(product.id)}
                       style={{
