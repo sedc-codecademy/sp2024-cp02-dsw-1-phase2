@@ -3,14 +3,8 @@ import { HiOutlineXMark, HiPlus, HiMinus } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../common/interfaces/cart.item.interface";
 import { BsCartX } from "react-icons/bs";
-import {
-  FaBox,
-  FaDollarSign,
-  FaSortAmountUp,
-  FaCalculator,
-  FaShoppingCart,
-} from "react-icons/fa";
 import { MdShoppingCartCheckout } from "react-icons/md";
+import { FaBox, FaDollarSign, FaSortAmountUp, FaCalculator, FaShoppingCart } from "react-icons/fa";
 import { IoBagCheckOutline } from "react-icons/io5";
 
 const CartPage: React.FC = () => {
@@ -21,8 +15,10 @@ const CartPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  // Save cart items to local storage and trigger storage event
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
+    window.dispatchEvent(new Event("storage")); // Trigger storage event
   }, [cartItems]);
 
   // Increment product quantity
@@ -65,6 +61,7 @@ const CartPage: React.FC = () => {
     // Clear cart items and update local storage
     setCartItems([]);
     localStorage.removeItem("cart");
+    window.dispatchEvent(new Event("storage")); // Trigger storage event
   };
 
   return (
@@ -75,9 +72,7 @@ const CartPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Looks like your cart is empty!
           </h2>
-          <p className="text-lg text-gray-500 mb-8">
-            Time to start your shopping
-          </p>
+          <p className="text-lg text-gray-500 mb-8">Time to start your shopping</p>
           <button
             className="bg-blue-600 text-white flex justify-center items-center px-8 py-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform hover:scale-105"
             onClick={() => navigate("/")}
@@ -125,10 +120,7 @@ const CartPage: React.FC = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b transition hover:bg-gray-50"
-                >
+                <tr key={item.id} className="border-b transition hover:bg-gray-50">
                   <td className="py-4 pr-6">
                     <button
                       className="w-4 h-4 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-transform hover:scale-105 shadow-md"
@@ -145,9 +137,7 @@ const CartPage: React.FC = () => {
                     />
                     <div>
                       <p className="font-semibold text-gray-900">{item.name}</p>
-                      <p className="text-gray-500 text-xs">
-                        {item.description}
-                      </p>
+                      <p className="text-gray-500 text-xs">{item.description}</p>
                     </div>
                   </td>
                   <td className="py-4 text-center font-semibold text-gray-900 px-4">
