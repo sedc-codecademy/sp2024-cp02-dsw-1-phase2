@@ -1,4 +1,3 @@
-// CardsDiv.tsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Product } from "../common/types/Product-interface";

@@ -18,9 +18,7 @@ const IconButtons = ({
   const [cartItemCount, setCartItemCount] = useState(0);
 
   // Fetch the cart items from local storage and update the count
-  const updateCartItemCount = () => {
-    const storedCart = localStorage.getItem("cart");
-    const cartItems = storedCart ? JSON.parse(storedCart) : [];
+  const updateCartItemCount = (cartItems: any[]) => {
     const count = cartItems.reduce(
       (total: number, item: { quantity: number }) => total + item.quantity,
       0
@@ -28,15 +26,22 @@ const IconButtons = ({
     setCartItemCount(count);
   };
 
-  // Listen to storage changes (cart updates)
   useEffect(() => {
-    updateCartItemCount(); // On initial load, fetch the cart count
+    // Initial load: Fetch cart count
+    const storedCart = localStorage.getItem("cart");
+    const cartItems = storedCart ? JSON.parse(storedCart) : [];
+    updateCartItemCount(cartItems);
 
-    const handleStorageChange = () => updateCartItemCount();
-    window.addEventListener("storage", handleStorageChange);
+    // Listen to custom 'cartUpdated' event
+    const handleCartUpdate = (event: any) => {
+      const updatedCartItems = event.detail;
+      updateCartItemCount(updatedCartItems);
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("cartUpdated", handleCartUpdate);
     };
   }, []);
 
@@ -54,7 +59,7 @@ const IconButtons = ({
         )}
       </Link>
 
-      {/* Other icons (Heart, User, ArrowRightLeft, etc.) */}
+      {/* Other icons */}
       <Link to="/favorites">
         <button className="p-2 rounded-full hover:bg-blue-500 transition-colors duration-300 text-gray-800">
           <Heart size={20} />

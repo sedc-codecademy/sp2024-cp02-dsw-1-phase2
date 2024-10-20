@@ -18,7 +18,10 @@ const addToCart = (product: CartItem) => {
   // Save the updated cart to localStorage
   localStorage.setItem("cart", JSON.stringify(cartItems));
 
-  // Return the updated cart for state synchronization
+  // Dispatch a custom event to notify other components that the cart has been updated
+  window.dispatchEvent(new CustomEvent("cartUpdated", { detail: cartItems }));
+
+  // Return the updated cart for state synchronization if needed
   return cartItems;
 };
 

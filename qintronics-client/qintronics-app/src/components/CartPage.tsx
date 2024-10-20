@@ -15,10 +15,10 @@ const CartPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  // Save cart items to local storage and trigger storage event
+  // Save cart items to local storage and trigger the cartUpdated event
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
-    window.dispatchEvent(new Event("storage")); // Trigger storage event
+    window.dispatchEvent(new CustomEvent("cartUpdated", { detail: cartItems }));
   }, [cartItems]);
 
   // Increment product quantity
@@ -61,7 +61,7 @@ const CartPage: React.FC = () => {
     // Clear cart items and update local storage
     setCartItems([]);
     localStorage.removeItem("cart");
-    window.dispatchEvent(new Event("storage")); // Trigger storage event
+    window.dispatchEvent(new CustomEvent("cartUpdated", { detail: [] }));
   };
 
   return (
