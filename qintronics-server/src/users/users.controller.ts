@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,6 +19,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -30,11 +32,12 @@ import { Role } from 'src/common/enums/roles.enum';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { BasicUserResponse } from './dtos/basic-user-response.dto';
+import { BasicUserResponseDto } from './dtos/basic-user-response.dto';
 import { UpdateUserRoleDto } from './dtos/update-user-role.dto';
-import { UserProfileResponse } from './dtos/user-profile-response.dto';
+import { UserProfileResponseDto } from './dtos/user-profile-response.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
+import { UsersQueryDto } from './dtos/users-query.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -45,8 +48,14 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users and their info' })
+  @ApiQuery({
+    required: false,
+    type: UsersQueryDto,
+    name: 'search',
+    description: 'Search word for users',
+  })
   @ApiOkResponse({
-    type: [BasicUserResponse],
+    type: [BasicUserResponseDto],
     description: 'All users are retrieved.',
   })
   @ApiUnauthorizedResponse({
@@ -55,11 +64,13 @@ export class UsersController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  async getAllUsers(): Promise<BasicUserResponse[]> {
-    const users = await this.usersService.getAllUsers();
+  async getAllUsers(
+    @Query() query: UsersQueryDto,
+  ): Promise<BasicUserResponseDto[]> {
+    const users = await this.usersService.getAllUsers(query);
 
     return users.map((user) =>
-      plainToInstance(BasicUserResponse, user, {
+      plainToInstance(BasicUserResponseDto, user, {
         excludeExtraneousValues: true,
       }),
     );
@@ -69,7 +80,7 @@ export class UsersController {
   @Get('me')
   @ApiOperation({ summary: 'Get a user and their info' })
   @ApiOkResponse({
-    type: UserProfileResponse,
+    type: UserProfileResponseDto,
     description: 'User has been retrieved.',
   })
   @ApiUnauthorizedResponse({
@@ -81,10 +92,10 @@ export class UsersController {
   @ApiNotFoundResponse({ description: 'User does not exist.' })
   async getUserByProfile(
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<UserProfileResponse> {
+  ): Promise<UserProfileResponseDto> {
     const user = await this.usersService.getUserProfile(currentUser);
 
-    return plainToInstance(UserProfileResponse, user, {
+    return plainToInstance(UserProfileResponseDto, user, {
       excludeExtraneousValues: true,
     });
   }
@@ -99,7 +110,7 @@ export class UsersController {
   })
   @ApiBody({ type: UpdateUserRoleDto })
   @ApiOkResponse({
-    type: BasicUserResponse,
+    type: BasicUserResponseDto,
     description: 'User role has been updated.',
   })
   @ApiBadRequestResponse({
@@ -115,10 +126,10 @@ export class UsersController {
   async changeUserRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() { role }: UpdateUserRoleDto,
-  ): Promise<BasicUserResponse> {
+  ): Promise<BasicUserResponseDto> {
     const user = await this.usersService.changeUserRole(id, role);
 
-    return plainToInstance(BasicUserResponse, user, {
+    return plainToInstance(BasicUserResponseDto, user, {
       excludeExtraneousValues: true,
     });
   }

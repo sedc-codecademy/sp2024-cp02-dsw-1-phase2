@@ -25,7 +25,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/roles.enum';
 import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { PageDto } from 'src/common/ordersPagination/page.dto';
+import { PageDto } from 'src/common/pagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { Order } from 'src/orders/order.entity';
 import { OrderCreateDto } from './dtos/order-create.dto';

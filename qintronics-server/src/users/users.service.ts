@@ -11,6 +11,7 @@ import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { UserInfoService } from 'src/user-info/user-info.service';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { UsersQueryDto } from './dtos/users-query.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,12 +20,19 @@ export class UsersService {
     private readonly userInfoService: UserInfoService,
   ) {}
 
-  // Just customer users or?
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepository.find({
-      where: { role: Role.Customer },
-      relations: { userInfo: true },
-    });
+  async getAllUsers({ search }: UsersQueryDto): Promise<User[]> {
+    const usersQuery = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userInfo', 'userInfo');
+
+    if (search) {
+      usersQuery
+        .where('user.firstName LIKE :searchParam', { search: `%${search}%` })
+        .orWhere('user.lastName LIKE :searchParam', { search: `%${search}%` })
+        .orWhere('user.email LIKE :searchParam', { search: `%${search}%` });
+    }
+
+    return usersQuery.getMany();
   }
 
   async getUserById(id: string): Promise<User> {
@@ -88,29 +96,6 @@ export class UsersService {
 
   async saveNewPassword(userId: string, password: string): Promise<void> {
     password = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
-
-    await this.userRepository.update(userId, {
-      password,
-      resetPasswordToken: null,
-    });
-  }
-
-  async saveRefreshToken(user: User, refreshToken: string): Promise<void> {
-    await this.userRepository.update(user.id, {
-      refreshTokens: [...user.refreshTokens, refreshToken],
-    });
-  }
-
-  async saveResetPasswordToken(userId: string, resetPasswordToken) {
-    await this.userRepository.update(userId, { resetPasswordToken });
-  }
-
-  async removeRefreshToken(user: User, refreshToken: string): Promise<void> {
-    await this.userRepository.update(user.id, {
-      refreshTokens: user.refreshTokens.filter(
-        (token) => token !== refreshToken,
-      ),
-    });
   }
 
   async changeUserRole(id: string, role: Role): Promise<User> {
@@ -201,6 +186,4 @@ export class UsersService {
 
     return this.userRepository.find({ relations: { userInfo: true } });
   }
-
-  // can admin search for one particular user?
 }
