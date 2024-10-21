@@ -9,9 +9,12 @@ import { RegisterDto } from 'src/auth/dtos/register.dto';
 import { Role } from 'src/common/enums/roles.enum';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
 import { UserInfoService } from 'src/user-info/user-info.service';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { UsersQueryDto } from './dtos/users-query.dto';
+import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
+import { PageMetaDto } from 'src/common/pagination/page-meta.dto';
+import { PageDto } from 'src/common/pagination/page.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +23,12 @@ export class UsersService {
     private readonly userInfoService: UserInfoService,
   ) {}
 
-  async getAllUsers({ search }: UsersQueryDto): Promise<User[]> {
+  async getAllUsers(
+    { search }: UsersQueryDto,
+    paginationQueries: PageOptionsDto,
+  ): Promise<PageDto<User>> {
+    const { skip, perPage } = paginationQueries;
+
     const usersQuery = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.userInfo', 'userInfo');
@@ -32,7 +40,13 @@ export class UsersService {
         .orWhere('user.email LIKE :searchParam', { search: `%${search}%` });
     }
 
-    return usersQuery.getMany();
+    usersQuery.skip(skip).take(perPage);
+
+    const [entities, itemCount] = await usersQuery.getManyAndCount();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, paginationQueries });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   async getUserById(id: string): Promise<User> {

@@ -38,6 +38,8 @@ import { UserProfileResponseDto } from './dtos/user-profile-response.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 import { UsersQueryDto } from './dtos/users-query.dto';
+import { PageOptionsDto } from 'src/common/pagination/page-options.dto';
+import { PageDto } from 'src/common/pagination/page.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Roles(Role.Admin)
@@ -66,13 +68,17 @@ export class UsersController {
   })
   async getAllUsers(
     @Query() query: UsersQueryDto,
-  ): Promise<BasicUserResponseDto[]> {
-    const users = await this.usersService.getAllUsers(query);
+    @Query() paginationQueries: PageOptionsDto,
+  ): Promise<PageDto<BasicUserResponseDto>> {
+    const users = await this.usersService.getAllUsers(query, paginationQueries);
 
-    return users.map((user) =>
-      plainToInstance(BasicUserResponseDto, user, {
-        excludeExtraneousValues: true,
-      }),
+    return new PageDto<BasicUserResponseDto>(
+      users.data.map((user) =>
+        plainToInstance(BasicUserResponseDto, user, {
+          excludeExtraneousValues: true,
+        }),
+      ),
+      users.meta,
     );
   }
 
