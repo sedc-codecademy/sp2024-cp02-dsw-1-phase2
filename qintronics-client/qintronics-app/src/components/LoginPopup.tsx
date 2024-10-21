@@ -1,13 +1,84 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import SimpleLogin from ".//SimpleLogin";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import { useContext, useState } from "react";
+import axiosInstance from "../common/utils/axios-instance.util";
+import { AuthContext } from "../context/auth.context";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 interface LoginPopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ isOpen, onClose }) => {
+const LoginPopup = ({ isOpen, onClose }: LoginPopupProps) => {
+  const { setUser } = useContext(AuthContext);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false); // New state for forgot password form
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const toggleForm = () => {
+    setIsLogin(!isLogin);
+    setName("");
+    setEmail("");
+    setPassword("");
+    setErrorMessages([]);
+  };
+
+  const openForgotPasswordForm = () => {
+    setIsForgotPassword(true); // Open forgot password form
+  };
+
+  const closeForgotPasswordForm = () => {
+    setIsForgotPassword(false); // Close forgot password form
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const errors: string[] = [];
+
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      errors.push("Email is not valid.");
+    }
+    if (password.length < 6) {
+      errors.push("Password must be at least 6 characters long.");
+    }
+
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      return;
+    }
+
+    setErrorMessages([]);
+    if (isLogin) {
+      console.log("Logging in with:", email, password);
+    } else {
+      console.log("Registering with:", name, email, password);
+    }
+
+    setName("");
+    setEmail("");
+    setPassword("");
+    onClose();
+
+    axiosInstance
+      .post("/auth/login", { email, password })
+      .then((res) => {
+        //do something with response
+        setUser(res.data);
+      })
+      .catch((err) => {
+        // do something if you get error
+      });
+  };
+
+  const handleForgotPasswordEmailSent = (email: string) => {
+    console.log(`Password reset email sent to: ${email}`);
+    closeForgotPasswordForm(); // Close the form after email is sent
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (

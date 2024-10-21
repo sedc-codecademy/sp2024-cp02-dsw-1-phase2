@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Route, Routes } from "react-router-dom";
-import PrivateRoute from "./components/PrivateRoute";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
 import CategoryPage from "./components/CategoryPage";
@@ -15,8 +14,10 @@ import Header from "./components/Header";
 import LoginPopup from "./components/LoginPopup";
 import MainComponent from "./components/MainComponent";
 import OrderPage from "./components/OrderPage";
+import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
 import SalesPage from "./components/SalesPage";
+import AuthContextProvider from "./context/auth.context";
 import { CardPaymentProvider } from "./context/card-payment.context";
 import { UserProvider } from "./context/UserContext";
 import AboutUs from "./components/AboutUs";
@@ -32,7 +33,7 @@ function App() {
   const toggleChat = () => setIsChatOpen(!isChatOpen);
 
   return (
-    <UserProvider>
+    <AuthContextProvider>
       <div className="App flex flex-col">
         <Header onLoginClick={toggleLoginPopup} />
 
@@ -85,7 +86,7 @@ function App() {
           </motion.div>
         )}
       </div>
-    </UserProvider>
+    </AuthContextProvider>
   );
 }
 
