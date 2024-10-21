@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, DollarSign } from "lucide-react";
 import { useRef } from "react";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 interface DropdownMenuProps {
   isMenuOpen: boolean;
@@ -31,24 +32,24 @@ const DropdownMenu = ({
           ref={menuRef}
         >
           <nav className="px-4 py-3 space-y-2">
-            <a
-              href="/"
+            <Link
+              to="/"
               className="block py-2 hover:text-blue-500 text-gray-800 transition-colors duration-300"
             >
               Home
-            </a>
-            <a
-              href="/about"
+            </Link>
+            <Link
+              to="/about-us"
               className="block py-2 hover:text-blue-500 text-gray-800 transition-colors duration-300"
             >
-              About
-            </a>
-            <a
-              href="/contact"
+              About Us
+            </Link>
+            <Link
+              to="/contact"
               className="block py-2 hover:text-blue-500 text-gray-800 transition-colors duration-300"
             >
               Contact
-            </a>
+            </Link>
             <div className="flex items-center justify-between py-2">
               <button
                 onClick={toggleLanguage}

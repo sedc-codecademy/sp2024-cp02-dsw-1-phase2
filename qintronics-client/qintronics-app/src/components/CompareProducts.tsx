@@ -6,7 +6,7 @@ import ProductCard from "./ProductCard";
 // import { fetchProducts } from "./../common/utils/fetchProducts";
 import { XCircle, CheckCircle, PlusCircle } from "lucide-react";
 
-const CompareProducts: React.FC = () => {
+const CompareProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);

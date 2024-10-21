@@ -3,13 +3,48 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { Product } from 'src/products/product.entity';
 import { NoSensitiveUserResponseDto } from 'src/users/dtos/no-sensitive-user-response.dto';
 
-class ProductsAndQuantityReturnDto {
+class BasicProductDto {
   @Expose()
   @ApiProperty({
-    type: Product,
+    type: 'string',
+    description: 'Product unique ID in UUID format',
+    example: '0ff3e9c2-ec93-4735-a1da-50c834a78ffc',
+  })
+  id: string;
+
+  @Expose()
+  @ApiProperty({
+    type: 'string',
+    description: 'Product name',
+    example: 'Lenovo ThinkPad X1 Carbon Gen 9',
+  })
+  name: string;
+
+  @Expose()
+  @ApiProperty({
+    type: 'string',
+    description: 'Product brand',
+    example: 'Lenovo',
+  })
+  brand: string;
+
+  @Expose()
+  @ApiProperty({
+    type: 'string',
+    description: 'Product category',
+    example: './images/laptops/lenovo-1.jpg',
+  })
+  img: string;
+}
+
+export class ProductsAndQuantityReturnDto {
+  @Expose()
+  @Type(() => BasicProductDto)
+  @ApiProperty({
+    type: BasicProductDto,
     description: 'The product details',
   })
-  product: Product;
+  product: BasicProductDto;
 
   @Expose()
   @ApiProperty({
@@ -18,6 +53,14 @@ class ProductsAndQuantityReturnDto {
     example: 2,
   })
   quantity: number;
+
+  @Expose()
+  @ApiProperty({
+    type: 'number',
+    description: 'The price of the product at the time of the order',
+    example: 2998,
+  })
+  priceAtOrderTime: number;
 }
 
 export class OrderReturnDto {
@@ -119,7 +162,7 @@ export class OrderReturnDto {
     type: [ProductsAndQuantityReturnDto],
     description: 'List of products with their quantities',
   })
-  productsAndQuantity: ProductsAndQuantityReturnDto[];
+  orderProduct: ProductsAndQuantityReturnDto[];
 
   @Exclude()
   createdAt: Date;

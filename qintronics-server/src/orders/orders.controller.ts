@@ -27,9 +27,10 @@ import { JwtGuard } from 'src/common/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PageDto } from 'src/common/pagination/page.dto';
 import { ICurrentUser } from 'src/common/types/current-user.interface';
-import { Order } from 'src/orders/order.entity';
 import { OrderCreateDto } from './dtos/order-create.dto';
+import { QueryOrderReturnDto } from './dtos/order-query-return.dto';
 import { OrderReturnDto } from './dtos/order-return.dto';
+import { MonthlyTotalHistoryDto } from './dtos/order-totals-return.dto';
 import { OrderUpdateDto } from './dtos/order-update.dto';
 import { GetAllOrdersDto } from './dtos/orders-get-all.dto';
 import { StatusUpdateDto } from './dtos/status-update.dto';
@@ -41,12 +42,30 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
+  //* GET TOTALS FOR ADMIN DASHBOARD
+  @Roles(Role.Admin)
+  @Get('/monthly-totals')
+  @ApiOperation({ summary: 'Get monthly totals for admin dashboard' })
+  @ApiOkResponse({
+    type: [MonthlyTotalHistoryDto],
+    description: 'Monthly totals successfully retrieved',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'This is admin only page.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User does not have permission to access this page.',
+  })
+  async getMonthlyHistory(): Promise<MonthlyTotalHistoryDto[]> {
+    return await this.ordersService.getMonthlyTotalsHistory();
+  }
+
   //* GET ALL ORDERS W/ QUERIES AND PAGINATION
   @Roles(Role.Admin, Role.DeliveryPerson, Role.Customer)
   @Post('/get')
   @ApiOperation({ summary: 'Retrieve all orders' })
   @ApiCreatedResponse({
-    type: [OrderReturnDto],
+    type: [QueryOrderReturnDto],
     description: 'Orders successfully retrieved',
   })
   @ApiBody({
@@ -58,7 +77,7 @@ export class OrdersController {
   @ApiForbiddenResponse({
     description: 'User does not have permission to access this page.',
   })
-  getAll(@Body() body: GetAllOrdersDto): Promise<PageDto<OrderReturnDto>> {
+  getAll(@Body() body: GetAllOrdersDto): Promise<PageDto<QueryOrderReturnDto>> {
     const { paginationQueries, queryParams } = body;
     return this.ordersService.getAll(paginationQueries, queryParams);
   }
@@ -73,7 +92,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -84,7 +103,7 @@ export class OrdersController {
   })
   getOrderById(
     @Param('orderId', ParseUUIDPipe) orderId: string,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.getOrderById(orderId);
   }
 
@@ -100,7 +119,7 @@ export class OrdersController {
     description: 'Id of the user',
   })
   @ApiOkResponse({
-    type: [Order],
+    type: [OrderReturnDto],
     description: 'Orders successfully retrieved',
   })
   @ApiUnauthorizedResponse({
@@ -111,7 +130,7 @@ export class OrdersController {
   })
   getOrdersByUserId(
     @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<Order[]> {
+  ): Promise<OrderReturnDto[]> {
     return this.ordersService.getOrdersByUserId(userId);
   }
 
@@ -123,7 +142,7 @@ export class OrdersController {
     type: OrderCreateDto,
   })
   @ApiCreatedResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully created',
   })
   @ApiUnauthorizedResponse({
@@ -135,7 +154,7 @@ export class OrdersController {
   createOrder(
     @Body() order: OrderCreateDto,
     @CurrentUser() currentUser: ICurrentUser,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.createOrder(order, currentUser);
   }
 
@@ -149,7 +168,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully canceled',
   })
   @ApiUnauthorizedResponse({
@@ -161,7 +180,7 @@ export class OrdersController {
   cancelOrder(
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.cancelOrder(orderId, user);
   }
 
@@ -191,7 +210,7 @@ export class OrdersController {
     @Body() status: StatusUpdateDto,
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.updateOrderStatus(status, orderId, user);
   }
   //* UPDATE ORDER (ADMIN)
@@ -207,7 +226,7 @@ export class OrdersController {
     description: 'Id of the order',
   })
   @ApiOkResponse({
-    type: Order,
+    type: OrderReturnDto,
     description: 'Order successfully updated',
   })
   @ApiUnauthorizedResponse({
@@ -220,7 +239,7 @@ export class OrdersController {
     @Body() order: OrderUpdateDto,
     @Param('orderId', ParseUUIDPipe) orderId: string,
     @CurrentUser() user: ICurrentUser | undefined,
-  ): Promise<Order> {
+  ): Promise<OrderReturnDto> {
     return this.ordersService.updateOrder(order, orderId, user);
   }
 

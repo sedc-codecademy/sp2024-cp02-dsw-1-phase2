@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Route, Routes } from "react-router-dom";
 import CardPaymentForm from "./components/CardPaymentForm";
 import CartPage from "./components/CartPage";
@@ -16,23 +16,21 @@ import MainComponent from "./components/MainComponent";
 import OrderPage from "./components/OrderPage";
 import PrivateRoute from "./components/PrivateRoute";
 import ProductDetailsPage from "./components/ProductDetailsPage";
-import ProductList from "./components/ProductList";
 import SalesPage from "./components/SalesPage";
 import AuthContextProvider from "./context/auth.context";
 import { CardPaymentProvider } from "./context/card-payment.context";
-import products from "./data/products.json";
+import { UserProvider } from "./context/UserContext";
+import AboutUs from "./components/AboutUs";
+import FAQ from "./components/FAQ";
+import Shipping from "./components/Shipping";
+import Favorites from "./components/Favorites";
 
 function App() {
   const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false); // Manage chat visibility
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const toggleLoginPopup = () => setIsLoginPopupOpen(!isLoginPopupOpen);
-  const toggleChat = () => setIsChatOpen(!isChatOpen); // Toggle chat window
-
-  const convertedProducts = products.map((product) => ({
-    ...product,
-    price: Number(product.price),
-  }));
+  const toggleChat = () => setIsChatOpen(!isChatOpen);
 
   return (
     <AuthContextProvider>
@@ -47,18 +45,18 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/checkout" element={<OrderPage />} />
                 <Route path="/payment" element={<CardPaymentForm />} />
+                <Route path="/favorites" element={<Favorites />} />
               </Route>
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/compare" element={<CompareProducts />} />
-              <Route path="/dashboard" element={<Dashboard />} />{" "}
-              <Route
-                path="/products"
-                element={<ProductList productList={convertedProducts} />}
-              />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/products/:id" element={<ProductDetailsPage />} />
               <Route path="/sales" element={<SalesPage />} />
               <Route path="/category/:category" element={<CategoryPage />} />
               <Route path="/category/gift-cards" element={<GiftCard />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/shipping" element={<Shipping />} />
             </Routes>
           </CardPaymentProvider>
         </div>
@@ -68,7 +66,7 @@ function App() {
 
         <div className="fixed bottom-4 right-4">
           <motion.button
-            onClick={toggleChat} // Opens the chat on button click
+            onClick={toggleChat}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="bg-blue-600 text-white p-4 rounded-full shadow-lg focus:outline-none"

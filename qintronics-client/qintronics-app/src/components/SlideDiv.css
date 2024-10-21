@@ -170,7 +170,7 @@
 .discounted-price {
   font-size: 1.25rem;
   font-weight: bold;
-  color: green; /* Green for discounted price */
+  color: #1bd8c4;
 }
 
 .original-price {
